@@ -1,0 +1,1 @@
+from myuser.models.user_models import UserProfile

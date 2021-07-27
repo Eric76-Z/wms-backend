@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/3.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
-
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -34,6 +34,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
+    'workstation.apps.WorkstationConfig',
+    'myuser.apps.MyuserConfig',
 ]
 
 MIDDLEWARE = [
@@ -95,12 +98,21 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+# 邮箱配置模块
+# SMTP服务器，改为你的邮箱的smtp!
+EMAIL_HOST = 'smtp.163.com'
+EMAIL_HOST_USER = '17826859320@163.com'  # 改为你自己的邮箱名！
+EMAIL_HOST_PASSWORD = 'ETUSUGKLARTYOXYN'  # 你的邮箱密码
+EMAIL_PORT = 25  # 发送邮件的端口
+EMAIL_USE_TLS = True  # 是否使用 TLS
+DEFAULT_FROM_EMAIL = 'hasaiii的博客 <17826859320@163.com>'  # 默认的发件人
+
 # Internationalization
 # https://docs.djangoproject.com/en/3.2/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'zh-hans'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Shanghai'
 
 USE_I18N = True
 
@@ -112,8 +124,37 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
 STATIC_URL = '/static/'
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static'),
+]
+MEDIA_ROOT = os.path.join(BASE_DIR, 'static/upload')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# DRF配置信息
+REST_FRAMEWORK = {
+    # 1、全局认证
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.BasicAuthentication',  # 此认证方案使用HTTP 基本认证，针对用户的用户名和密码进行认证。基本认证通常只适用于测试。
+        'rest_framework.authentication.SessionAuthentication',  # 自己服务器认证用户
+    ],
+    # 2、全局权限
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',  # 普通用户
+        # 'rest_framework.permissions.AllowAny',  # 所有用户
+        # 'rest_framework.permissions.IsAdminUser',  # 管理员用户
+    ],
+    'DEFAULT_THROTTLE_CLASSES': [
+        'rest_framework.throttling.AnonRateThrottle',  # 未授权用户
+        'rest_framework.throttling.UserRateThrottle',  # 认证用户
+    ],
+    'DEFAULT_THROTTLE_RATES': {
+        'anon': '100/day',
+        'user': '1000/day',
+    }
+
+}
+

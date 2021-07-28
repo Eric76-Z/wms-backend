@@ -1,6 +1,6 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
-from workstation.models.base_models import MyLog, MyTag, Files
+# from workstation.models.base_models import MyLog, MyTag, Files
 # from workstation.models.permission_models import PermissionType
 # from xadmin.plugins.auth import User
 

@@ -22,6 +22,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-^y)z!!f(gtfe_war5s6h%+xtq1eb!m$x=*qgg%f6=_g!4tl0=f'
 
 # SECURITY WARNING: don't run with debug turned on in production!
+# DEBUG = False
 DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
@@ -73,10 +74,21 @@ WSGI_APPLICATION = 'wms.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'HOST': '127.0.0.1',  # 数据库主机
+        'PORT': 3306,  # 数据库端口
+        'USER': 'root',  # 数据库用户名
+        'PASSWORD': 'Linux1175@',  # 数据库用户密码
+        'NAME': 'wms'  # 数据库名字
     }
 }
 
@@ -143,8 +155,8 @@ REST_FRAMEWORK = {
     ],
     # 2、全局权限
     'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticated',  # 普通用户
-        # 'rest_framework.permissions.AllowAny',  # 所有用户
+        # 'rest_framework.permissions.IsAuthenticated',  # 普通用户
+        'rest_framework.permissions.AllowAny',  # 所有用户
         # 'rest_framework.permissions.IsAdminUser',  # 管理员用户
     ],
     'DEFAULT_THROTTLE_CLASSES': [
@@ -155,6 +167,6 @@ REST_FRAMEWORK = {
         'anon': '100/day',
         'user': '1000/day',
     }
-
 }
 
+AUTH_USER_MODEL = 'myuser.UserProfile'

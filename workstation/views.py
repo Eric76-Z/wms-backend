@@ -15,12 +15,14 @@ class LocationsViewset(ModelViewSet):
 
     # 1,获取阅读量大于20的书籍
     @action(methods=['GET'], detail=False)  # 生成路由规则: 前缀/方法名/
-    def main_location(self, request):
-        print('wwwwwwwwwwwwwwww')
-        # 1,获取指定书籍
-        location = MyLocation.objects.filter(location_level_1='CPH2.1')
-        print(location)
+    def cph_location_tree(self, request):
+        list = []
+        # 1,获取CPH工位号
+        location = MyLocation.objects.filter(location_level_1__contains='CPH')
         # 2,创建序列化器对象
         serializer = self.get_serializer(instance=location, many=True)
+        for item in serializer.data:
+            if item not in list:
+                list.append(item)
         # 3,返回响应
-        return Response(serializer.data)
+        return Response(list)

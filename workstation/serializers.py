@@ -8,3 +8,6 @@ class LocationSerializer(serializers.ModelSerializer):
         model = MyLocation
         fields = ('location_level_1', 'location_level_2', 'location_level_3')
         read_only_fields = ('location_level_1', 'location_level_2', 'location_level_3')
+
+class BladeItemSerializer(serializers.ModelSerializer):
+    pass

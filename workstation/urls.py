@@ -18,8 +18,8 @@ router = SimpleRouter()
 
 # 2,注册视图集
 router.register('location', views.LocationsViewset, basename='location')
+router.register('bladeitem', views.BladeItemViewSet, basename='bladeitem')
 urlpatterns += router.urls
 
 # 3,输出结果
-print('wwwwwwwwwwww')
-print(urlpatterns)
+# print(urlpatterns)

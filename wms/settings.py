@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'corsheaders',
     'rest_framework',
+    'django_filters',
     'workstation.apps.WorkstationConfig',
     'myuser.apps.MyuserConfig',
 ]
@@ -161,6 +162,7 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.AllowAny',  # 所有用户
         # 'rest_framework.permissions.IsAdminUser',  # 管理员用户
     ],
+    # 节流
     'DEFAULT_THROTTLE_CLASSES': [
         'rest_framework.throttling.AnonRateThrottle',  # 未授权用户
         'rest_framework.throttling.UserRateThrottle',  # 认证用户
@@ -168,13 +170,23 @@ REST_FRAMEWORK = {
     'DEFAULT_THROTTLE_RATES': {
         'anon': '1000/day',
         'user': '1000/day',
-    }
+    },
+
+    # API文档
+    'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema',
+
+    # 分页
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 15,
+
+    # 过滤
+    'DEFAULT_FILTER_BACKENDS': ('django_filters.rest_framework.DjangoFilterBackend',)
+
 }
 
 AUTH_USER_MODEL = 'myuser.UserProfile'
 
-
 CORS_ALLOW_CREDENTIALS = True
 CORS_ORIGIN_ALLOW_ALL = True
-#允许所有的请求头
+# 允许所有的请求头
 CORS_ALLOW_HEADERS = ('*')

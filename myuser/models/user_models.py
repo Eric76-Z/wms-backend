@@ -60,6 +60,8 @@ class UserProfile(AbstractUser):
 
     def __str__(self):
         return self.last_name + self.first_name
+    def full_name(self):
+        return self.last_name + self.first_name
 
 
 #

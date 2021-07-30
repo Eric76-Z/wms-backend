@@ -1,19 +1,33 @@
 from django.shortcuts import render
 
 # Create your views here.
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.decorators import action
+from rest_framework.filters import OrderingFilter
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
-from workstation.models import MyLocation
-from workstation.serializers import LocationSerializer
+from workstation.models import MyLocation, BladeApply
+from workstation.serializers import LocationSerializer, BladeItemSerializer
+
+
+class MyPageNumberPagination(PageNumberPagination):
+    page_size = 10  # default limit per age
+    page_size_query_param = 'pageSize'  # default param is offset
+    max_limit = 15  # max limit per age
 
 
 class LocationsViewset(ModelViewSet):
     queryset = MyLocation.objects.all()
     serializer_class = LocationSerializer
 
-    # 1,获取阅读量大于20的书籍
+    '''
+    cph_location_tree:
+    返回一级地点带'CPH'字段的工位信息
+    '''
+
+    # 1,获取所有一级地点带’CPH‘的工位信息
     @action(methods=['GET'], detail=False)  # 生成路由规则: 前缀/方法名/
     def cph_location_tree(self, request):
         list = []
@@ -26,3 +40,29 @@ class LocationsViewset(ModelViewSet):
                 list.append(item)
         # 3,返回响应
         return Response(list)
+
+
+class BladeItemViewSet(ModelViewSet):
+
+    queryset = BladeApply.objects.all()
+    serializer_class = BladeItemSerializer
+    pagination_class = MyPageNumberPagination
+    filter_backends = (OrderingFilter, DjangoFilterBackend)
+    filter_fields = ['Lv1', 'Lv2', 'lv3',]
+    ordering_fields = ('create_time',)
+    ordering = ('-create_time') #默认排序
+
+    # @action(methods=['GET'], detail=False)
+    # def blade_item(self, request):
+    #     pagination_class = MyPageNumberPagination
+    #     query = request.query_params
+    #     print(query)
+    #     # 创建序列化器对象
+    #     queryset = self.get_object()
+    #     print(queryset)
+    #     # 配置分页数据
+    #     pagination = pagination_class.paginate_queryset(queryset, request, self)
+    #     #序列化
+    #     serializer = self.get_serializer(isinstance=pagination, many=True)
+    #
+    #     Response(serializer.data)

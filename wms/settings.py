@@ -168,7 +168,7 @@ REST_FRAMEWORK = {
         'rest_framework.throttling.UserRateThrottle',  # 认证用户
     ],
     'DEFAULT_THROTTLE_RATES': {
-        'anon': '1000/day',
+        'anon': '10000/day',
         'user': '1000/day',
     },
 

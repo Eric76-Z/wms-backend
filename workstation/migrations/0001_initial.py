@@ -3,7 +3,7 @@
 from django.conf import settings
 from django.db import migrations, models
 import django.db.models.deletion
-import mytools.utils
+import utils.utils
 
 
 class Migration(migrations.Migration):
@@ -84,7 +84,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('file_name', models.CharField(max_length=64, verbose_name='文件名')),
-                ('myfile', models.FileField(blank=True, null=True, upload_to=mytools.utils.FilePath, verbose_name='文件路径')),
+                ('myfile', models.FileField(blank=True, null=True, upload_to=utils.utils.FilePath, verbose_name='文件路径')),
                 ('create_time', models.DateTimeField(auto_now_add=True, null=True, verbose_name='创建时间')),
                 ('update_time', models.DateTimeField(auto_now=True, null=True, verbose_name='更新时间')),
             ],

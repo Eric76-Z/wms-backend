@@ -44,15 +44,28 @@ class LocationsViewset(ModelViewSet):
 
 
 class BladeItemViewSet(ModelViewSet):
-
     queryset = BladeApply.objects.all()
     serializer_class = BladeItemSerializer
     pagination_class = MyPageNumberPagination
     filter_backends = (OrderingFilter, DjangoFilterBackend)
     filterset_class = WeldinggunsFilter
     ordering_fields = ('create_time',)
-    ordering = ('-create_time') #默认排序
+    ordering = ('-create_time')  # 默认排序
 
+
+
+    # def list(self, request, *args, **kwargs):
+    #     queryset = self.filter_queryset(self.get_queryset())
+    #     # for t in queryset:
+    #     #     print(t)
+    #
+    #     # page = self.paginate_queryset(queryset)
+    #     # bladeitem = BladeApply.objects.all()
+    #     serializer = self.get_serializer(queryset, many=True)
+    #     for t in serializer:
+    #         print(t)
+    #     # print(serializer.data)
+    #     return Response({'rows': serializer.data, 'total': 'iii'})
     # @action(methods=['GET'], detail=False)
     # def blade_item(self, request):
     #     pagination_class = MyPageNumberPagination

@@ -1,6 +1,6 @@
 from django.db import models
 from workstation.models import PermissionType
-from mytools.utils import FilePath
+from utils.utils import FilePath
 
 
 class MySort(models.Model):

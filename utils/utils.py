@@ -1,4 +1,5 @@
 import copy
+import datetime
 
 import pymysql
 
@@ -50,3 +51,17 @@ def FilePath(filename, path):  # 其中instance代表使用此函数类的一个
     if isinstance(filename, str):  # 判断name是否是str类型的一个实例
         pic_write_path = path + filename
         return pic_write_path
+
+def SecondToLast(dict, dicts):
+    for item in dicts:
+        print(item)
+        if item['order_status'] == 4 and (item['weldinggun_num'] == dict['weldinggun_num']):
+            # results中每个item按创建时间顺序从晚到早排序。目的是上次领用时间比目前item的时间晚，所以当遍历到早于当前item的领用时间，
+            # 会由于已经被datetime格式化而无法再次被datetime格式化，报错后走except
+            try:
+                return datetime.datetime.strftime(item['receive_time'], '%Y-%m-%d %H:%M')
+            except:
+                pass
+            # except:
+            #     return item['receive_time']
+    return '首次领用'

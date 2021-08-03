@@ -48,25 +48,34 @@ class BladeItemSerializer(serializers.ModelSerializer):
         """重写返回的数据（添加额外字段）"""
         data = super().to_representation(value)
         # 获取接口权重数据进行组装
-
-        #     if (item['weldinggun_num'] == dict['weldinggun_num']):
-        #         # results中每个item按创建时间顺序从晚到早排序。目的是上次领用时间比目前item的时间晚，所以当遍历到早于当前item的领用时间，
-        #         # 会由于已经被datetime格式化而无法再次被datetime格式化，报错后走except
-        #         try:
-        #             return datetime.datetime.strftime(item['receive_time'], '%Y-%m-%d %H:%M')
-        #         except:
-        #             pass
-        #         # except:
-        #         #     return item['receive_time']
-        #
-        # return '首次领用'
-        dicts = BladeApply.objects.filter(Q(order_status=4) & Q(weldinggun__weldinggun_num=data['weldinggun'])).order_by('-create_time')
-        try:
-            print(dicts.values()[0])
-            last_replace = dicts.values()[0]['create_time']
-        except:
+        dicts = BladeApply.objects.filter(
+            Q(order_status=4) & Q(weldinggun__weldinggun_num=data['weldinggun'])).order_by('-create_time')
+        last_replace = '首次领用'
+        if dicts.exists():
+            if data['order_status'] == 4:
+                index = 0
+                for dict in dicts.values():
+                    index = index + 1
+                    if dict['id'] == data['id']:
+                        try:
+                            last_replace = dicts.values()[index]['create_time']
+                        except:
+                            last_replace = '首次领用'
+            else:
+                last_replace = dicts.values()[0]['create_time']
+        else:
             last_replace = '首次领用'
 
+        if data['order_status'] == 2:
+            try:
+                order_comments = data['order_comments']
+            except:
+                order_comments = '可能短时间内再次领用！'
+            data.update({"analyse": {
+                'order_comments': order_comments
+            }})
+        elif data['order_status'] == 4:
+            data.update({"analyse": {}})
         data.update({"analyse": {
             'last_replace': last_replace
         }})

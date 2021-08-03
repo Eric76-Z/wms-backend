@@ -52,8 +52,11 @@ class BladeItemViewSet(ModelViewSet):
     ordering_fields = ('create_time',)
     ordering = ('-create_time')  # 默认排序
 
-
-
+    @action(methods=['post'], detail=False)
+    def check(self, request):
+        id = request.data['id']
+        print(id)
+        return Response('ww')
     # def list(self, request, *args, **kwargs):
     #     queryset = self.filter_queryset(self.get_queryset())
     #     # for t in queryset:

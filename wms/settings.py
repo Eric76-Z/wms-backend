@@ -153,7 +153,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 REST_FRAMEWORK = {
     # 1、全局认证
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.BasicAuthentication',  # 此认证方案使用HTTP 基本认证，针对用户的用户名和密码进行认证。基本认证通常只适用于测试。
+        # 'rest_framework.authentication.BasicAuthentication',  # 此认证方案使用HTTP 基本认证，针对用户的用户名和密码进行认证。基本认证通常只适用于测试。
         'rest_framework.authentication.SessionAuthentication',  # 自己服务器认证用户
     ],
     # 2、全局权限

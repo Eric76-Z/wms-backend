@@ -1,7 +1,9 @@
+
+
 from django.db import models
 
 from myuser.models.user_models import UserProfile
-from workstation.models.base_models import Files
+from workstation.models.base_models import Files, Images
 from workstation.models.device_models import WeldingGun, Robot
 from workstation.models.parts_models import Parts
 
@@ -16,10 +18,10 @@ class BladeApply(models.Model):
                                  verbose_name="领用人")
     cycle_num = models.IntegerField(blank=True, null=True, verbose_name="圈数")
     pressure = models.DecimalField(max_digits=3, decimal_places=1, blank=True, null=True, verbose_name="压力")
-    oldblade_img = models.ForeignKey(Files, models.CASCADE, related_name='oldblade_files', blank=True, null=True, verbose_name="在用刀片图")
-    polestatus_img = models.ForeignKey(Files, models.CASCADE, related_name='polestatus_files', blank=True, null=True, verbose_name="电极帽状态")
+    oldblade_img = models.ForeignKey(Images, models.CASCADE, related_name='oldblade_imgs', blank=True, null=True, verbose_name="在用刀片图")
+    polestatus_img = models.ForeignKey(Images, models.CASCADE, related_name='polestatus_imgs', blank=True, null=True, verbose_name="电极帽状态")
     repair_order_num = models.IntegerField(blank=True, null=True, verbose_name="维修单号")
-    repair_order_img = models.ForeignKey(Files, models.CASCADE, related_name='repairorder_files', blank=True, null=True, verbose_name="维修单图")
+    repair_order_img = models.ForeignKey(Images, models.CASCADE, related_name='repairorder_imgs', blank=True, null=True, verbose_name="维修单图")
     order_status = models.IntegerField(blank=True, null=True, verbose_name="订单状态")
     order_comments = models.CharField(max_length=255, blank=True, null=True, verbose_name="订单备注")
     receive_time = models.DateTimeField(blank=True, null=True, verbose_name="领用时间")

@@ -2,7 +2,7 @@ from django.db import models
 
 
 from workstation.models import Company
-from workstation.models.base_models import Files, MySort, MyLog, MyTag
+from workstation.models.base_models import Files, MySort, MyLog, MyTag, Images
 from workstation.models.location_models import MyLocation
 from workstation.models.device_models import DevicesType
 from myuser.models import UserProfile
@@ -19,7 +19,7 @@ class Parts(models.Model):
     cordon = models.IntegerField(blank=True, null=True, verbose_name="警戒线")
     min_line = models.IntegerField(blank=True, null=True, verbose_name="底线")
     unit = models.CharField(max_length=16, blank=True, null=True, verbose_name="单位")
-    part_file = models.ManyToManyField(Files, blank=True, verbose_name="备件图")
+    part_file = models.ManyToManyField(Images, blank=True, verbose_name="备件图")
     mark = models.CharField(max_length=255, blank=True, null=True, verbose_name="备注")
     usefor = models.IntegerField(blank=True, null=True, verbose_name="用途")
     device_type = models.ManyToManyField(DevicesType, blank=True, verbose_name="所属设备")

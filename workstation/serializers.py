@@ -31,6 +31,9 @@ class BladeItemSerializer(serializers.ModelSerializer):
     localLv1 = serializers.CharField(source='weldinggun.location.location_level_1')
     localLv2 = serializers.CharField(source='weldinggun.location.location_level_2')
     localLv3 = serializers.CharField(source='weldinggun.location.location_level_3')
+    repair_order_img_name = serializers.CharField(source='repair_order_img.file_name', default='null')
+    repair_order_img = serializers.ImageField(source='repair_order_img.myfile', default='null')
+    repair_order_img_sort = serializers.IntegerField(source='repair_order_img.sort.id',  required=False)
 
     # last_receive_time = 55
 

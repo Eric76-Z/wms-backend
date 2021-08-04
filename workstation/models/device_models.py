@@ -1,5 +1,5 @@
 from django.db import models
-from workstation.models import MySort, Files, MyTag, MyLog
+from workstation.models import MySort, Files, MyTag, MyLog, Images
 from workstation.models.location_models import MyLocation, Company
 
 
@@ -77,7 +77,7 @@ class WeldingGun(models.Model):
     technology = models.ForeignKey(MySort, models.DO_NOTHING, blank=True, null=True, verbose_name="焊枪工艺")
     start_time = models.DateTimeField(blank=True, null=True, verbose_name="投入运行时间")
     ip = models.GenericIPAddressField(null=True, blank=True, verbose_name="IP")
-    tcp = models.ForeignKey(Files, models.CASCADE, blank=True, null=True, verbose_name="焊枪Tcp")
+    tcp = models.ForeignKey(Images, models.CASCADE, blank=True, null=True, verbose_name="焊枪Tcp")
     is_inuse = models.BooleanField(default=True, verbose_name="是否在用")
     project = models.CharField(max_length=64, blank=True, null=True, verbose_name="项目")
     create_time = models.DateTimeField(auto_now_add=True, blank=True, null=True, verbose_name="创建时间")

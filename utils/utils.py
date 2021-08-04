@@ -48,6 +48,7 @@ def SearchMysql(sql):
 
 
 def FilePath(filename, path):  # 其中instance代表使用此函数类的一个实例，filename就是我们上传文件的文件名（为什么filename就是文件名，我只能猜测是upload_to参数规定的
+    print(filename)
     if isinstance(filename, str):  # 判断name是否是str类型的一个实例
         pic_write_path = path + filename
         return pic_write_path

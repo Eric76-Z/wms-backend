@@ -3,7 +3,7 @@ from django.shortcuts import render
 # Create your views here.
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.decorators import action
-from rest_framework.filters import OrderingFilter
+from rest_framework.filters import OrderingFilter, SearchFilter
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
@@ -47,10 +47,11 @@ class BladeItemViewSet(ModelViewSet):
     queryset = BladeApply.objects.all()
     serializer_class = BladeItemSerializer
     pagination_class = MyPageNumberPagination
-    filter_backends = (OrderingFilter, DjangoFilterBackend)
+    filter_backends = (OrderingFilter, DjangoFilterBackend, SearchFilter,)
     filterset_class = WeldinggunsFilter
     ordering_fields = ('create_time',)
     ordering = ('-create_time')  # 默认排序
+    search_fields = ('weldinggun__weldinggun_num',)
 
     @action(methods=['post'], detail=False)
     def check(self, request):

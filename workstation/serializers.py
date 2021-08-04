@@ -3,7 +3,7 @@ from django.forms import model_to_dict
 from rest_framework import serializers
 
 from utils.utils import SecondToLast
-from workstation.models import MyLocation, BladeApply
+from workstation.models import MyLocation, BladeApply, Images
 
 
 class LocationSerializer(serializers.ModelSerializer):
@@ -22,6 +22,12 @@ class LocationSerializer(serializers.ModelSerializer):
         }
 
 
+class ImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Images
+        fields = '__all__'
+
+
 class BladeItemSerializer(serializers.ModelSerializer):
     weldinggun = serializers.CharField(source='weldinggun.weldinggun_num')
     bladetype_apply = serializers.CharField(source='bladetype_apply.my_spec')
@@ -31,11 +37,9 @@ class BladeItemSerializer(serializers.ModelSerializer):
     localLv1 = serializers.CharField(source='weldinggun.location.location_level_1')
     localLv2 = serializers.CharField(source='weldinggun.location.location_level_2')
     localLv3 = serializers.CharField(source='weldinggun.location.location_level_3')
-    repair_order_img_name = serializers.CharField(source='repair_order_img.file_name', default='null')
-    repair_order_img = serializers.ImageField(source='repair_order_img.myfile', default='null')
-    repair_order_img_sort = serializers.IntegerField(source='repair_order_img.sort.id',  required=False)
-
-    # last_receive_time = 55
+    # repair_order_img_name = serializers.CharField(source='repair_order_img.img_name', required=False)
+    repair_order_img = ImageSerializer(source='repair_order_img.img', allow_null=True)
+    # repair_order_img_sort = serializers.IntegerField(source='repair_order_img.sort.id', required=False)
 
     class Meta:
         model = BladeApply
@@ -47,9 +51,20 @@ class BladeItemSerializer(serializers.ModelSerializer):
         #     'last_receive_time')
         depth = 1  # 外键的序列化
 
+    def update(self, instance, validated_data):
+        print('wwwwwwwwwwww')
+        print(validated_data)
+        return instance
+    def validate(self, attrs):
+        print('wwwwwww')
+        print(attrs.get('repair_order_img'))
+        return attrs
+
     def to_representation(self, value):
         """重写返回的数据（添加额外字段）"""
+
         data = super().to_representation(value)
+        # print(data)
         # 获取接口权重数据进行组装
         dicts = BladeApply.objects.filter(
             Q(order_status=4) & Q(weldinggun__weldinggun_num=data['weldinggun'])).order_by('-create_time')

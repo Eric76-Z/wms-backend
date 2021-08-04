@@ -50,14 +50,9 @@ class BladeItemViewSet(ModelViewSet):
     filter_backends = (OrderingFilter, DjangoFilterBackend, SearchFilter,)
     filterset_class = WeldinggunsFilter
     ordering_fields = ('create_time',)
-    ordering = ('-create_time')  # 默认排序
+    ordering = ('-create_time',)  # 默认排序
     search_fields = ('weldinggun__weldinggun_num',)
 
-    @action(methods=['post'], detail=False)
-    def check(self, request):
-        id = request.data['id']
-        print(id)
-        return Response('ww')
     # def list(self, request, *args, **kwargs):
     #     queryset = self.filter_queryset(self.get_queryset())
     #     # for t in queryset:
@@ -70,17 +65,15 @@ class BladeItemViewSet(ModelViewSet):
     #         print(t)
     #     # print(serializer.data)
     #     return Response({'rows': serializer.data, 'total': 'iii'})
-    # @action(methods=['GET'], detail=False)
-    # def blade_item(self, request):
-    #     pagination_class = MyPageNumberPagination
-    #     query = request.query_params
-    #     print(query)
-    #     # 创建序列化器对象
-    #     queryset = self.get_object()
-    #     print(queryset)
-    #     # 配置分页数据
-    #     pagination = pagination_class.paginate_queryset(queryset, request, self)
-    #     #序列化
-    #     serializer = self.get_serializer(isinstance=pagination, many=True)
-    #
-    #     Response(serializer.data)
+    @action(methods=['PATCH'], detail=False)
+    def blade_item(self, request):
+        query = request.data
+        print(query)
+        # 创建序列化器对象
+        queryset = self.get_object()
+        print(queryset)
+        # 配置分页数据
+        #序列化
+        serializer = self.get_serializer(isinstance=queryset, many=True)
+
+        Response(serializer.data)

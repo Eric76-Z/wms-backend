@@ -53,6 +53,7 @@ def FilePath(filename, path):  # 其中instance代表使用此函数类的一个
         pic_write_path = path + filename
         return pic_write_path
 
+
 def SecondToLast(dict, dicts):
     for item in dicts:
         print(item)

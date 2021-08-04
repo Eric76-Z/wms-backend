@@ -1,5 +1,3 @@
-
-
 from django.db import models
 
 from myuser.models.user_models import UserProfile
@@ -10,18 +8,25 @@ from workstation.models.parts_models import Parts
 
 class BladeApply(models.Model):
     weldinggun = models.ForeignKey(WeldingGun, models.DO_NOTHING, blank=True, null=True, verbose_name="焊枪")
-    bladetype_apply = models.ForeignKey(Parts, models.DO_NOTHING, related_name='apply_parts', blank=True, null=True, verbose_name="申请刀片类型")
-    applicant = models.ForeignKey(UserProfile, models.DO_NOTHING, related_name='bladetype_applicant_myuser', blank=True, null=True,
-                                verbose_name="申请人")
-    bladetype_received = models.ForeignKey(Parts, models.DO_NOTHING, related_name='received_parts', blank=True, null=True, verbose_name="领用刀片类型")
-    receiver = models.ForeignKey(UserProfile, models.DO_NOTHING, related_name='bladetype_receiver_myuser', blank=True, null=True,
+    bladetype_apply = models.ForeignKey(Parts, models.DO_NOTHING, related_name='apply_parts', blank=True, null=True,
+                                        verbose_name="申请刀片类型")
+    applicant = models.ForeignKey(UserProfile, models.DO_NOTHING, related_name='bladetype_applicant_myuser', blank=True,
+                                  null=True,
+                                  verbose_name="申请人")
+    bladetype_received = models.ForeignKey(Parts, models.DO_NOTHING, related_name='received_parts', blank=True,
+                                           null=True, verbose_name="领用刀片类型")
+    receiver = models.ForeignKey(UserProfile, models.DO_NOTHING, related_name='bladetype_receiver_myuser', blank=True,
+                                 null=True,
                                  verbose_name="领用人")
     cycle_num = models.IntegerField(blank=True, null=True, verbose_name="圈数")
     pressure = models.DecimalField(max_digits=3, decimal_places=1, blank=True, null=True, verbose_name="压力")
-    oldblade_img = models.ForeignKey(Images, models.CASCADE, related_name='oldblade_imgs', blank=True, null=True, verbose_name="在用刀片图")
-    polestatus_img = models.ForeignKey(Images, models.CASCADE, related_name='polestatus_imgs', blank=True, null=True, verbose_name="电极帽状态")
+    oldblade_img = models.ForeignKey(Images, models.CASCADE, related_name='oldblade_imgs', blank=True, null=True,
+                                     verbose_name="在用刀片图")
+    polestatus_img = models.ForeignKey(Images, models.CASCADE, related_name='polestatus_imgs', blank=True, null=True,
+                                       verbose_name="电极帽状态")
     repair_order_num = models.IntegerField(blank=True, null=True, verbose_name="维修单号")
-    repair_order_img = models.ForeignKey(Images, models.CASCADE, related_name='repairorder_imgs', blank=True, null=True, verbose_name="维修单图")
+    repair_order_img = models.ForeignKey(Images, models.CASCADE, related_name='repairorder_imgs', blank=True, null=True,
+                                         verbose_name="维修单图")
     order_status = models.IntegerField(blank=True, null=True, verbose_name="订单状态")
     order_comments = models.CharField(max_length=255, blank=True, null=True, verbose_name="订单备注")
     receive_time = models.DateTimeField(blank=True, null=True, verbose_name="领用时间")
@@ -37,9 +42,11 @@ class BladeApply(models.Model):
 
 
 class WeldingGunClothes(models.Model):
-    applicant = models.ForeignKey(UserProfile, models.DO_NOTHING, related_name='weldinggunclothes_applicant_myuser', blank=True, null=True,
+    applicant = models.ForeignKey(UserProfile, models.DO_NOTHING, related_name='weldinggunclothes_applicant_myuser',
+                                  blank=True, null=True,
                                   verbose_name="申请人")
-    replacer = models.ForeignKey(UserProfile, models.DO_NOTHING, related_name='weldinggunclothes_replacer_myuser', blank=True, null=True, verbose_name="更换人")
+    replacer = models.ForeignKey(UserProfile, models.DO_NOTHING, related_name='weldinggunclothes_replacer_myuser',
+                                 blank=True, null=True, verbose_name="更换人")
     weldinggun = models.ForeignKey(WeldingGun, models.DO_NOTHING, blank=True, null=True, verbose_name="焊枪")
     reason_replace = models.CharField(max_length=255, blank=True, null=True, verbose_name="更换原因")
     is_replace = models.BooleanField(default=False, verbose_name="是否更换")
@@ -58,9 +65,11 @@ class WeldingGunClothes(models.Model):
 
 
 class WeldingGunDamage(models.Model):
-    applicant = models.ForeignKey(UserProfile, models.DO_NOTHING, related_name='weldinggundamage_applicant_myuser', blank=True, null=True,
+    applicant = models.ForeignKey(UserProfile, models.DO_NOTHING, related_name='weldinggundamage_applicant_myuser',
+                                  blank=True, null=True,
                                   verbose_name="申请人")
-    confirmer = models.ForeignKey(UserProfile, models.DO_NOTHING, related_name='weldinggundamage_confirmer_myuser', blank=True, null=True,
+    confirmer = models.ForeignKey(UserProfile, models.DO_NOTHING, related_name='weldinggundamage_confirmer_myuser',
+                                  blank=True, null=True,
                                   verbose_name="确认人")
     weldinggun = models.ForeignKey(WeldingGun, models.DO_NOTHING, blank=True, null=True, verbose_name="焊枪")
     damage_part = models.CharField(max_length=255, blank=True, null=True, verbose_name="损坏部件")
@@ -79,12 +88,14 @@ class WeldingGunDamage(models.Model):
     def __str__(self):
         return self.weldinggun.weldinggun_num
 
+
 class MaintenanceRecords(models.Model):
-    applicant = models.ForeignKey(UserProfile, models.DO_NOTHING, related_name='maintenancerecords_applicant_myuser', blank=True, null=True,
+    applicant = models.ForeignKey(UserProfile, models.DO_NOTHING, related_name='maintenancerecords_applicant_myuser',
+                                  blank=True, null=True,
                                   verbose_name="上传人")
     inductor = models.ForeignKey(UserProfile, models.DO_NOTHING, related_name='maintenancerecords_inductor_myuser',
-                                  blank=True, null=True,
-                                  verbose_name="归纳人")
+                                 blank=True, null=True,
+                                 verbose_name="归纳人")
     maintenance_worker = models.ManyToManyField(UserProfile, blank=True)
     rob = models.ForeignKey(Robot, models.DO_NOTHING, blank=True, null=True, verbose_name="机器人")
     car_model = models.CharField(max_length=32, blank=True, null=True, verbose_name="车型")
@@ -101,7 +112,6 @@ class MaintenanceRecords(models.Model):
 
     def __str__(self):
         return self.rob.robot_num
-
 
 # class WeldinggunTcp(models.Model):
 #     uploader = models.ForeignKey(MyUser, models.DO_NOTHING, blank=True, null=True, verbose_name="上传人")

@@ -1,5 +1,4 @@
 from django.db import models
-
 from workstation.models.base_models import MySort, Files
 
 
@@ -17,7 +16,6 @@ class Company(models.Model):
 
     def __str__(self):
         return self.company_name
-
 
 
 class MyLocation(models.Model):

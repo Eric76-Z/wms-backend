@@ -31,19 +31,20 @@ class Files(models.Model):
     def __str__(self):
         return self.file_name
 
+
 class Images(models.Model):
     permission = models.ManyToManyField(PermissionType, blank=True, verbose_name="权限")
     img_name = models.CharField(max_length=64, verbose_name='图片名')
-    img = models.FileField(null=True, blank=True, upload_to=FilePath, verbose_name="图片")
+    img = models.ImageField(null=True, blank=True, upload_to=FilePath,  verbose_name="图片")
     sort = models.ForeignKey(MySort, on_delete=models.DO_NOTHING, blank=True, null=True, verbose_name='分类')
     create_time = models.DateTimeField(auto_now_add=True, blank=True, null=True, verbose_name="创建时间")
     update_time = models.DateTimeField(auto_now=True, blank=True, null=True, verbose_name="更新时间")
 
     class Meta:
         db_table = 'Images'
+
     def __str__(self):
         return self.img_name
-
 
 
 class MyLog(models.Model):

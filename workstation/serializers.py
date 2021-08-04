@@ -38,7 +38,7 @@ class BladeItemSerializer(serializers.ModelSerializer):
     localLv2 = serializers.CharField(source='weldinggun.location.location_level_2')
     localLv3 = serializers.CharField(source='weldinggun.location.location_level_3')
     # repair_order_img_name = serializers.CharField(source='repair_order_img.img_name', required=False)
-    repair_order_img = ImageSerializer(source='repair_order_img.img', allow_null=True)
+    repair_order_img = serializers.ImageField(source='repair_order_img.img', allow_null=True)
     # repair_order_img_sort = serializers.IntegerField(source='repair_order_img.sort.id', required=False)
 
     class Meta:
@@ -53,7 +53,7 @@ class BladeItemSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         print('wwwwwwwwwwww')
-        print(validated_data)
+        print(validated_data.items())
         return instance
     def validate(self, attrs):
         print('wwwwwww')

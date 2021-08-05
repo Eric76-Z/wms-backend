@@ -7,13 +7,14 @@ from django.forms import model_to_dict
 from rest_framework import serializers
 
 from utils.utils import SecondToLast
-from workstation.models import MyLocation, BladeApply, Images
-from drf_extra_fields.fields import Base64ImageField
+from workstation.models import MyLocation, BladeApply, Images, WeldingGun
 
-@receiver(pre_delete, sender=Images) #sender=你要删除或修改文件字段所在的类**
-def file_delete(instance, **kwargs):       #函数名随意
-    print('进入文件删除方法，删的是',instance.img)  #用于测试
-    instance.img.delete(False) #file是保存文件或图片的字段名**
+
+@receiver(pre_delete, sender=Images)  # sender=你要删除或修改文件字段所在的类**
+def file_delete(instance, **kwargs):  # 函数名随意
+    print('进入文件删除方法，删的是', instance.img)  # 用于测试
+    instance.img.delete(False)  # file是保存文件或图片的字段名**
+
 
 class LocationSerializer(serializers.ModelSerializer):
     localLv1 = serializers.CharField(source='location_level_1')
@@ -118,11 +119,8 @@ class BladeItemSerializer(serializers.ModelSerializer):
             if bladeitem.repair_order_img_id:
                 print(bladeitem.repair_order_img_id)
                 image = Images.objects.get(pk=bladeitem.repair_order_img_id)
-                # image.delete()
-                print('wwwwwwwwww')
-                file_delete(image)
-                # print('wwwwwwwwwwww')
-                # print(result)
+
+                file_delete(image)  # 删除文件
 
             image = Images.objects.create(
                 img_name='roimg-' + str(bladeitem.repair_order_num),
@@ -133,3 +131,10 @@ class BladeItemSerializer(serializers.ModelSerializer):
             self.validated_data['repair_order_img_id'] = image.id
             self.validated_data['complete_time'] = datetime.datetime.now()
         return super(BladeItemSerializer, self).is_valid(raise_exception)
+
+
+class WeldinggunSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = WeldingGun
+        fields = '__all__'
+        depth = 1  # 外键的序列化

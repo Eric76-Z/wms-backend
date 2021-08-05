@@ -20,6 +20,7 @@ router = SimpleRouter()
 router.register('location', views.LocationsViewset, basename='location')
 router.register('bladeitem', views.BladeItemViewSet, basename='bladeitem')
 router.register('images', views.ImagesViewSet, basename='images')
+router.register('weldinggun', views.WeldingGunViewSet, basename='weldinggun')
 urlpatterns += router.urls
 
 # 3,输出结果

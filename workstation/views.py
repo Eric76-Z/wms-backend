@@ -12,8 +12,8 @@ from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
 from utils.filters import WeldinggunsFilter
-from workstation.models import MyLocation, BladeApply, Images
-from workstation.serializers import LocationSerializer, BladeItemSerializer, ImageSerializer
+from workstation.models import MyLocation, BladeApply, Images, WeldingGun
+from workstation.serializers import LocationSerializer, BladeItemSerializer, ImageSerializer, WeldinggunSerializer
 
 
 class MyPageNumberPagination(PageNumberPagination):
@@ -25,12 +25,13 @@ class MyPageNumberPagination(PageNumberPagination):
 class LocationsViewset(ModelViewSet):
     queryset = MyLocation.objects.all()
     serializer_class = LocationSerializer
+    filter_backends = (DjangoFilterBackend, SearchFilter,)
+    search_fields = ('weldinggun__weldinggun_num',)
 
     '''
     cph_location_tree:
     返回一级地点带'CPH'字段的工位信息
     '''
-
     # 1,获取所有一级地点带’CPH‘的工位信息
     @action(methods=['GET'], detail=False)  # 生成路由规则: 前缀/方法名/
     def cph_location_tree(self, request):
@@ -102,3 +103,7 @@ class ImagesViewSet(ModelViewSet):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.error, status=status.HTTP_400_BAD_REQUEST)
+
+class WeldingGunViewSet(ModelViewSet):
+    queryset = WeldingGun.objects.all()
+    serializer_class = WeldinggunSerializer

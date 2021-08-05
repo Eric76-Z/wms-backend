@@ -1,10 +1,16 @@
 import copy
 import datetime
+import uuid
 
 import pymysql
 
 
 # fields为表头，将数据库中筛选出的results与表头拼接，生成字典。不断遍历，多个字典添加到列表，最后赋值给rows
+from django.db.models.signals import pre_delete
+from django.dispatch import receiver
+
+
+
 def toRows(fields, results):
     column_list = []
     dict = {}
@@ -47,10 +53,20 @@ def SearchMysql(sql):
     return results
 
 
-def FilePath(filename, path):  # 其中instance代表使用此函数类的一个实例，filename就是我们上传文件的文件名（为什么filename就是文件名，我只能猜测是upload_to参数规定的
-    print(filename)
+def FilePath(instance, filename):  # 其中instance代表使用此函数类的一个实例，filename就是我们上传文件的文件名（为什么filename就是文件名，我只能猜测是upload_to参数规定的
+    instance_name = str(instance)
+    # 获取当前时间
+    now_time = datetime.datetime.now()
+    # 格式化时间字符串
+    str_time = now_time.strftime("%Y-%m")
+    # 后缀
+    ext = filename.split('.')[-1]
+    # 默认路径
+    path = 'img/'
+    if instance_name.startswith('roimg'):
+        path = 'img/blade/roimg/' + str(str_time) + '/'
     if isinstance(filename, str):  # 判断name是否是str类型的一个实例
-        pic_write_path = path + filename
+        pic_write_path = path + instance_name + '-{}.{}'.format(uuid.uuid4().hex[:10], ext)
         return pic_write_path
 
 
@@ -67,3 +83,4 @@ def SecondToLast(dict, dicts):
             # except:
             #     return item['receive_time']
     return '首次领用'
+

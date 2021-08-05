@@ -14,11 +14,15 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 # from django.contrib import admin
-from django.urls import path, include
+from django.urls import path, include, re_path
+from django.views.static import serve
 from rest_framework.documentation import include_docs_urls
+
+from wms.settings import MEDIA_ROOT
 
 urlpatterns = [
     #    path('admin/', admin.site.urls),
     path('workstation/', include('workstation.urls')),
     path('docs/', include_docs_urls(title="WMS API 文档", description="描述信息")),
+    re_path(r'media/(?P<path>.*)$',serve,{'document_root':MEDIA_ROOT}),
 ]

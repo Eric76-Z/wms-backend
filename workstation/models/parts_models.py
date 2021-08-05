@@ -19,7 +19,7 @@ class Parts(models.Model):
     cordon = models.IntegerField(blank=True, null=True, verbose_name="警戒线")
     min_line = models.IntegerField(blank=True, null=True, verbose_name="底线")
     unit = models.CharField(max_length=16, blank=True, null=True, verbose_name="单位")
-    part_file = models.ManyToManyField(Images, blank=True, verbose_name="备件图")
+    part_file = models.ManyToManyField(Images, blank=True,  verbose_name="备件图")
     mark = models.CharField(max_length=255, blank=True, null=True, verbose_name="备注")
     usefor = models.IntegerField(blank=True, null=True, verbose_name="用途")
     device_type = models.ManyToManyField(DevicesType, blank=True, verbose_name="所属设备")

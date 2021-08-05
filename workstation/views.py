@@ -1,7 +1,10 @@
+import base64
+
 from django.shortcuts import render
 
 # Create your views here.
 from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.filters import OrderingFilter, SearchFilter
 from rest_framework.pagination import PageNumberPagination
@@ -9,8 +12,8 @@ from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
 from utils.filters import WeldinggunsFilter
-from workstation.models import MyLocation, BladeApply
-from workstation.serializers import LocationSerializer, BladeItemSerializer
+from workstation.models import MyLocation, BladeApply, Images
+from workstation.serializers import LocationSerializer, BladeItemSerializer, ImageSerializer
 
 
 class MyPageNumberPagination(PageNumberPagination):
@@ -53,27 +56,49 @@ class BladeItemViewSet(ModelViewSet):
     ordering = ('-create_time',)  # 默认排序
     search_fields = ('weldinggun__weldinggun_num',)
 
-    # def list(self, request, *args, **kwargs):
-    #     queryset = self.filter_queryset(self.get_queryset())
-    #     # for t in queryset:
-    #     #     print(t)
-    #
-    #     # page = self.paginate_queryset(queryset)
-    #     # bladeitem = BladeApply.objects.all()
-    #     serializer = self.get_serializer(queryset, many=True)
-    #     for t in serializer:
-    #         print(t)
-    #     # print(serializer.data)
-    #     return Response({'rows': serializer.data, 'total': 'iii'})
-    @action(methods=['PATCH'], detail=False)
-    def blade_item(self, request):
-        query = request.data
-        print(query)
-        # 创建序列化器对象
-        queryset = self.get_object()
-        print(queryset)
-        # 配置分页数据
-        #序列化
-        serializer = self.get_serializer(isinstance=queryset, many=True)
+    # @action(methods=['PATCH'], detail=True)
+    # def upload_img(self, request, *args, **kwargs):
+    #     data = request.data
+    #     print(data)
+    #     ser_data = data
+    #     if data['sort'] == 'repair_order_img':  # 维修单图片
+    #         bladeitem = BladeApply.objects.get(pk=data['itemid'])
+    #         ser_data = {
+    #             'img_name': 'roimg-' + str(bladeitem.repair_order_num),
+    #             'img': data['img'],
+    #         }
+    #         serializer = self.get_serializer(data=ser_data, partial=True)
+    #         if serializer.is_valid():
+    #             serializer.save()
+    #             bladeitem.repair_order_img.id = self.get_object()
+    #             return Response(serializer.data, status=status.HTTP_201_CREATED)
+    #     serializer = self.get_serializer(data=ser_data)
+    #     if serializer.is_valid():
+    #         serializer.save()
+    #         return Response(serializer.data, status=status.HTTP_201_CREATED)
+    #     return Response(serializer.error, status=status.HTTP_400_BAD_REQUEST)
 
-        Response(serializer.data)
+
+class ImagesViewSet(ModelViewSet):
+    queryset = Images.objects.all()
+    serializer_class = ImageSerializer
+
+    def create(self, request, *args, **kwargs):
+        data = request.data
+        ser_data = data
+        if data['sort'] == 'repair_order_img':  # 维修单图片
+            bladeitem = BladeApply.objects.get(pk=data['itemid'])
+            ser_data = {
+                'img_name': 'roimg-' + str(bladeitem.repair_order_num),
+                'img': data['img'],
+            }
+            serializer = self.get_serializer(data=ser_data)
+            if serializer.is_valid():
+                serializer.save()
+                bladeitem.repair_order_img.id = self.get_object()
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+        serializer = self.get_serializer(data=ser_data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.error, status=status.HTTP_400_BAD_REQUEST)

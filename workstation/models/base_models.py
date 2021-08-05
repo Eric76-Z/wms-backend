@@ -3,6 +3,7 @@ from workstation.models import PermissionType
 from utils.utils import FilePath
 
 
+
 class MySort(models.Model):
     type_name = models.CharField(max_length=64, blank=True, null=True, verbose_name='分类名')
     f_type_id = models.IntegerField(blank=True, null=True, verbose_name='父分类')

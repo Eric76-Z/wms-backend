@@ -1,10 +1,19 @@
+import datetime
+
 from django.db.models import Q
+from django.db.models.signals import pre_delete
+from django.dispatch import receiver
 from django.forms import model_to_dict
 from rest_framework import serializers
 
 from utils.utils import SecondToLast
 from workstation.models import MyLocation, BladeApply, Images
+from drf_extra_fields.fields import Base64ImageField
 
+@receiver(pre_delete, sender=Images) #sender=你要删除或修改文件字段所在的类**
+def file_delete(instance, **kwargs):       #函数名随意
+    print('进入文件删除方法，删的是',instance.img)  #用于测试
+    instance.img.delete(False) #file是保存文件或图片的字段名**
 
 class LocationSerializer(serializers.ModelSerializer):
     localLv1 = serializers.CharField(source='location_level_1')
@@ -25,7 +34,7 @@ class LocationSerializer(serializers.ModelSerializer):
 class ImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Images
-        fields = '__all__'
+        fields = ('img_name', 'img')
 
 
 class BladeItemSerializer(serializers.ModelSerializer):
@@ -37,9 +46,10 @@ class BladeItemSerializer(serializers.ModelSerializer):
     localLv1 = serializers.CharField(source='weldinggun.location.location_level_1')
     localLv2 = serializers.CharField(source='weldinggun.location.location_level_2')
     localLv3 = serializers.CharField(source='weldinggun.location.location_level_3')
-    # repair_order_img_name = serializers.CharField(source='repair_order_img.img_name', required=False)
-    repair_order_img = serializers.ImageField(source='repair_order_img.img', allow_null=True)
-    # repair_order_img_sort = serializers.IntegerField(source='repair_order_img.sort.id', required=False)
+    # # repair_order_img_name = serializers.CharField(source='repair_order_img.img_name', required=False)
+    repair_order_img = ImageSerializer()
+
+    # # repair_order_img_sort = serializers.IntegerField(source='repair_order_img.sort.id', required=False)
 
     class Meta:
         model = BladeApply
@@ -51,18 +61,8 @@ class BladeItemSerializer(serializers.ModelSerializer):
         #     'last_receive_time')
         depth = 1  # 外键的序列化
 
-    def update(self, instance, validated_data):
-        print('wwwwwwwwwwww')
-        print(validated_data.items())
-        return instance
-    def validate(self, attrs):
-        print('wwwwwww')
-        print(attrs.get('repair_order_img'))
-        return attrs
-
     def to_representation(self, value):
         """重写返回的数据（添加额外字段）"""
-
         data = super().to_representation(value)
         # print(data)
         # 获取接口权重数据进行组装
@@ -99,3 +99,37 @@ class BladeItemSerializer(serializers.ModelSerializer):
         }})
         # 返回处理之后的数据
         return data
+
+    def create(self, validated_data):
+        repair_order_img = validated_data.pop('repair_order_img')
+        bladeitem = BladeApply.objects.create(**validated_data)
+        Images.objects.create(bladeitem=bladeitem, **repair_order_img)
+        return bladeitem
+
+    def update(self, instance, validated_data):
+        print(instance)
+        print(validated_data)
+        super().update(instance, validated_data)
+        return instance
+
+    def is_valid(self, raise_exception=False):
+        if self.initial_data.get("img"):
+            bladeitem = BladeApply.objects.get(pk=self.initial_data['id'])
+            if bladeitem.repair_order_img_id:
+                print(bladeitem.repair_order_img_id)
+                image = Images.objects.get(pk=bladeitem.repair_order_img_id)
+                # image.delete()
+                print('wwwwwwwwww')
+                file_delete(image)
+                # print('wwwwwwwwwwww')
+                # print(result)
+
+            image = Images.objects.create(
+                img_name='roimg-' + str(bladeitem.repair_order_num),
+                img=self.initial_data['img'],
+            )
+            bladeitem.repair_order_img = image
+            print(super(BladeItemSerializer, self).is_valid(raise_exception))
+            self.validated_data['repair_order_img_id'] = image.id
+            self.validated_data['complete_time'] = datetime.datetime.now()
+        return super(BladeItemSerializer, self).is_valid(raise_exception)

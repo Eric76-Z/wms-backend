@@ -1,9 +1,19 @@
+import os
+import uuid
+
 from django.db import models
 
 from myuser.models.user_models import UserProfile
 from workstation.models.base_models import Files, Images
 from workstation.models.device_models import WeldingGun, Robot
 from workstation.models.parts_models import Parts
+
+
+# 使用uuid创建唯一的图片名，并保存的路径和文件名一并返回
+def evaluation_directory_path(product_id, filename):
+    ext = filename.split('.')[-1]
+    filename = '{}.{}'.format(uuid.uuid4().hex[:10], ext)
+    return os.path.join("evaluations", filename)
 
 
 class BladeApply(models.Model):

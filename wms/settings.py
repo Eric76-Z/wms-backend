@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 import os
+from datetime import timedelta
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -156,7 +157,8 @@ REST_FRAMEWORK = {
     # 1、全局认证
     'DEFAULT_AUTHENTICATION_CLASSES': [
         # 'rest_framework.authentication.BasicAuthentication',  # 此认证方案使用HTTP 基本认证，针对用户的用户名和密码进行认证。基本认证通常只适用于测试。
-        'rest_framework.authentication.SessionAuthentication',  # 自己服务器认证用户
+        # 'rest_framework.authentication.SessionAuthentication',  # 自己服务器认证用户
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],
     # 2、全局权限
     'DEFAULT_PERMISSION_CLASSES': [
@@ -184,6 +186,12 @@ REST_FRAMEWORK = {
     # 过滤
     'DEFAULT_FILTER_BACKENDS': ('django_filters.rest_framework.DjangoFilterBackend',)
 
+}
+
+# JWT配置 里面具体配置可以参考文档
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=7),  # 配置过期时间
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=15),
 }
 
 AUTH_USER_MODEL = 'myuser.UserProfile'

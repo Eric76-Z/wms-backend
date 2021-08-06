@@ -23,6 +23,7 @@ from wms.settings import MEDIA_ROOT
 urlpatterns = [
     #    path('admin/', admin.site.urls),
     path('workstation/', include('workstation.urls')),
+    path('myuser/', include('myuser.urls')),
     path('docs/', include_docs_urls(title="WMS API 文档", description="描述信息")),
-    re_path(r'media/(?P<path>.*)$',serve,{'document_root':MEDIA_ROOT}),
+    re_path(r'media/(?P<path>.*)$', serve, {'document_root': MEDIA_ROOT}),
 ]

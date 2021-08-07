@@ -13,15 +13,26 @@ from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
 
 from utils.filters import WeldinggunsFilter
-from workstation.models import MyLocation, BladeApply, Images, WeldingGun, Robot, MaintenanceRecords
+from workstation.models import MyLocation, BladeApply, Images, WeldingGun, Robot, MaintenanceRecords, Parts
 from workstation.serializers import LocationSerializer, BladeItemSerializer, ImageSerializer, WeldinggunSerializer, \
-    MaintenanceRecordsSerializer
+    MaintenanceRecordsSerializer, PartsSerializer
 
 
 class MyPageNumberPagination(PageNumberPagination):
     page_size = 10  # default limit per age
     page_size_query_param = 'pageSize'  # default param is offset
     max_limit = 15  # max limit per age
+
+
+class PartsViewSet(ModelViewSet):
+    queryset = Parts.objects.all()
+    serializer_class = PartsSerializer
+    # pagination_class = MyPageNumberPagination
+    filter_backends = (OrderingFilter, DjangoFilterBackend, SearchFilter,)
+    filter_fields = ('sort', 'tag',)  # 逗号必加,缺点无法模糊查询
+    ordering_fields = ('create_time',)
+    ordering = ('-create_time',)  # 默认排序
+    search_fields = ('part_num', 'my_spec', 'order_num', 'brand__company_name', 'supplier__company_name')
 
 
 class LocationsViewset(ModelViewSet):

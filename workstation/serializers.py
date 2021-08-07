@@ -10,7 +10,7 @@ from rest_framework import serializers
 from myuser.models import UserProfile
 from utils.utils import SecondToLast
 from wms import settings
-from workstation.models import MyLocation, BladeApply, Images, WeldingGun, MaintenanceRecords
+from workstation.models import MyLocation, BladeApply, Images, WeldingGun, MaintenanceRecords, Parts
 
 
 @receiver(pre_delete, sender=Images)  # sender=你要删除或修改文件字段所在的类**
@@ -159,3 +159,10 @@ class MaintenanceRecordsSerializer(serializers.ModelSerializer):
         self.validated_data['localLv3'] = local[2]
         # print(self.validated_data)
         return super(MaintenanceRecordsSerializer, self).is_valid(raise_exception)
+
+
+class PartsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Parts
+        fields = '__all__'
+        depth = 1  # 外键的序列化

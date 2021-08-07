@@ -17,6 +17,7 @@ router = SimpleRouter()
 
 # 2,注册视图集
 router.register('location', views.LocationsViewset, basename='location')
+router.register('parts', views.PartsViewSet, basename='parts')
 router.register('bladeitem', views.BladeItemViewSet, basename='bladeitem')
 router.register('images', views.ImagesViewSet, basename='images')
 router.register('weldinggun', views.WeldingGunViewSet, basename='weldinggun')

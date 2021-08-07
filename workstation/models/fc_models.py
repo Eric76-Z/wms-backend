@@ -106,22 +106,29 @@ class MaintenanceRecords(models.Model):
     inductor = models.ForeignKey(UserProfile, models.DO_NOTHING, related_name='maintenancerecords_inductor_myuser',
                                  blank=True, null=True,
                                  verbose_name="归纳人")
-    maintenance_worker = models.ManyToManyField(UserProfile, blank=True)
-    rob = models.ForeignKey(Robot, models.DO_NOTHING, blank=True, null=True, verbose_name="机器人")
+    maintenance_worker = models.ManyToManyField(UserProfile, blank=True, verbose_name="维修人员")
+    sort = models.CharField(max_length=32, blank=True, null=True, verbose_name="故障类型")  # 设备故障、高频故障
+    device_type = models.CharField(max_length=32, blank=True, null=True, verbose_name="设备")
+    workstation = models.CharField(max_length=32, blank=True, null=True, verbose_name="工位")
+    localLv1 = models.CharField(max_length=16, blank=True, null=True, verbose_name="一级地点")
+    localLv2 = models.CharField(max_length=16, blank=True, null=True, verbose_name="二级地点")
+    localLv3 = models.CharField(max_length=16, blank=True, null=True, verbose_name="三级地点")
     car_model = models.CharField(max_length=32, blank=True, null=True, verbose_name="车型")
-    start_time = models.DateTimeField(blank=True, null=True, verbose_name="开始时间")
-    end_time = models.DateTimeField(blank=True, null=True, verbose_name="结束时间")
     maintenance_record = models.TextField(blank=True, null=True, verbose_name="维修记录")
     experience_summary = models.TextField(blank=True, null=True, verbose_name="经验总结")
     order_comments = models.CharField(max_length=255, blank=True, null=True, verbose_name="备注")
+    start_time = models.DateTimeField(blank=True, null=True, verbose_name="开始时间")
+    end_time = models.DateTimeField(blank=True, null=True, verbose_name="结束时间")
+    duration = models.IntegerField(blank=True, null=True, verbose_name="持续时间")
     create_time = models.DateTimeField(auto_now_add=True, blank=True, null=True, verbose_name="创建时间")
     update_time = models.DateTimeField(auto_now=True, blank=True, null=True, verbose_name="更新时间")
+    order_status = models.IntegerField(blank=True, null=True, verbose_name="订单状态")
 
     class Meta:
         db_table = 'maintenance_records'
 
     def __str__(self):
-        return self.rob.robot_num
+        return self.workstation
 
 # class WeldinggunTcp(models.Model):
 #     uploader = models.ForeignKey(MyUser, models.DO_NOTHING, blank=True, null=True, verbose_name="上传人")

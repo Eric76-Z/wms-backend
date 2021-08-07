@@ -1,13 +1,16 @@
 import datetime
 
+import jwt
 from django.db.models import Q
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
 from django.forms import model_to_dict
 from rest_framework import serializers
 
+from myuser.models import UserProfile
 from utils.utils import SecondToLast
-from workstation.models import MyLocation, BladeApply, Images, WeldingGun
+from wms import settings
+from workstation.models import MyLocation, BladeApply, Images, WeldingGun, MaintenanceRecords
 
 
 @receiver(pre_delete, sender=Images)  # sender=你要删除或修改文件字段所在的类**
@@ -138,3 +141,21 @@ class WeldinggunSerializer(serializers.ModelSerializer):
         model = WeldingGun
         fields = '__all__'
         depth = 1  # 外键的序列化
+
+
+class MaintenanceRecordsSerializer(serializers.ModelSerializer):
+    # token = serializers.CharField(label='生成token', read_only=True)
+    class Meta:
+        model = MaintenanceRecords
+        fields = '__all__'
+        depth = 1  # 外键的序列化
+
+    def is_valid(self, raise_exception=False):
+        local = self.initial_data['MyLocation'].split('-')
+        super(MaintenanceRecordsSerializer, self).is_valid(raise_exception)
+        self.validated_data['applicant_id'] = self.initial_data['applicant_id']
+        self.validated_data['localLv1'] = local[0]
+        self.validated_data['localLv2'] = local[1]
+        self.validated_data['localLv3'] = local[2]
+        # print(self.validated_data)
+        return super(MaintenanceRecordsSerializer, self).is_valid(raise_exception)

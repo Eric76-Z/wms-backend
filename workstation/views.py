@@ -4,16 +4,18 @@ from django.shortcuts import render
 
 # Create your views here.
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import status
+from rest_framework import status, permissions
 from rest_framework.decorators import action
 from rest_framework.filters import OrderingFilter, SearchFilter
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
+from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
 
 from utils.filters import WeldinggunsFilter
-from workstation.models import MyLocation, BladeApply, Images, WeldingGun
-from workstation.serializers import LocationSerializer, BladeItemSerializer, ImageSerializer, WeldinggunSerializer
+from workstation.models import MyLocation, BladeApply, Images, WeldingGun, Robot, MaintenanceRecords
+from workstation.serializers import LocationSerializer, BladeItemSerializer, ImageSerializer, WeldinggunSerializer, \
+    MaintenanceRecordsSerializer
 
 
 class MyPageNumberPagination(PageNumberPagination):
@@ -32,6 +34,7 @@ class LocationsViewset(ModelViewSet):
     cph_location_tree:
     返回一级地点带'CPH'字段的工位信息
     '''
+
     # 1,获取所有一级地点带’CPH‘的工位信息
     @action(methods=['GET'], detail=False)  # 生成路由规则: 前缀/方法名/
     def cph_location_tree(self, request):
@@ -46,13 +49,44 @@ class LocationsViewset(ModelViewSet):
         # 3,返回响应
         return Response(list)
 
+    # 1,获取所有一级地点带’CPH‘的工位信息
+    #  /workstation/location/back_by_target/?location=all&target=weldinggun
+    @action(methods=['GET'], detail=False)  # 生成路由规则: 前缀/方法名/
+    def back_by_target(self, request):
+        print(request.query_params)
+        query = request.query_params
+        data = []
+        if query['target'] == 'local':
+            locations = MyLocation.objects.filter(location_level_1__contains='CPH')
+            for location in locations:
+                data.append({
+                    'value': location.location_level_4,
+                    'area': location.location_level_1 + '-' + location.location_level_2 + '-' + location.location_level_3
+                })
+            return Response(data)
+        if query['target'] == 'robot':
+            robots = Robot.objects.filter(location__location_level_1__contains='CPH')
+            for robot in robots:
+                data.append({
+                    'value': robot.robot_num,
+                    'area': robot.location.location_level_1 + '-' + robot.location.location_level_2 + '-' + robot.location.location_level_3
+                })
+            return Response(data)
+        if query['target'] == 'weldinggun':
+            weldingguns = WeldingGun.objects.filter(location__location_level_1__contains='CPH')
+            for weldinggun in weldingguns:
+                data.append({
+                    'value': weldinggun.weldinggun_num,
+                    'area': weldinggun.location.location_level_1 + '-' + weldinggun.location.location_level_2 + '-' + weldinggun.location.location_level_3
+                })
+            return Response(data)
+
 
 class BladeItemViewSet(ModelViewSet):
     queryset = BladeApply.objects.all()
     serializer_class = BladeItemSerializer
     pagination_class = MyPageNumberPagination
     filter_backends = (OrderingFilter, DjangoFilterBackend, SearchFilter,)
-    filterset_class = WeldinggunsFilter
     ordering_fields = ('create_time',)
     ordering = ('-create_time',)  # 默认排序
     search_fields = ('weldinggun__weldinggun_num',)
@@ -104,6 +138,20 @@ class ImagesViewSet(ModelViewSet):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.error, status=status.HTTP_400_BAD_REQUEST)
 
+
 class WeldingGunViewSet(ModelViewSet):
     queryset = WeldingGun.objects.all()
     serializer_class = WeldinggunSerializer
+
+
+class MaintenanceRecordsViewSet(ModelViewSet):
+    # permission_classes = [permissions.IsAuthenticated]
+    # authentication_classes = (authentication.JWTAuthentication,)
+    queryset = MaintenanceRecords.objects.all()
+    serializer_class = MaintenanceRecordsSerializer
+    pagination_class = MyPageNumberPagination
+    filter_backends = (OrderingFilter, DjangoFilterBackend, SearchFilter,)
+    # filterset_class = WeldinggunsFilter
+    ordering_fields = ('create_time',)
+    ordering = ('-create_time',)  # 默认排序
+    # search_fields = ('',)

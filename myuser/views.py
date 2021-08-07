@@ -1,32 +1,8 @@
 from rest_framework import generics
 
-from myuser.serializers import UserRegSerializer
+from myuser.serializers import UserRegSerializer, MyTokenObtainPairSerializer
 
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
-
-
-class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
-    def validate(self, attrs):
-        data = super().validate(attrs)
-        refresh = self.get_token(self.user)
-        data['refresh'] = str(refresh)
-        data['token'] = str(refresh.access_token)
-
-        # Add extra responses here
-        data['username'] = self.user.username
-        data['groups'] = self.user.groups.values_list('name', flat=True)
-        data['userId'] = self.user.id
-        data['isSuper'] = self.user.is_superuser
-        try:
-            data['realname'] = self.user.last_name + self.user.first_name
-            data['phonenum'] = self.user.phonenum
-            data['email'] = self.user.email
-        except:
-            data['realname'] = 'null'
-            data['phonenum'] = 'null'
-            data['phonenum'] = 'null'
-        return data
 
 
 class MyTokenObtainPairView(TokenObtainPairView):

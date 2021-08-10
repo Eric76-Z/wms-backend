@@ -40,20 +40,18 @@ class ImageSerializer(serializers.ModelSerializer):
         model = Images
         fields = ('img_name', 'img')
 
+class WeldinggunSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = WeldingGun
+        fields = '__all__'
+        depth = 1  # 外键的序列化
+
 
 class BladeItemSerializer(serializers.ModelSerializer):
-    weldinggun = serializers.CharField(source='weldinggun.weldinggun_num')
-    bladetype_apply = serializers.CharField(source='bladetype_apply.my_spec')
-    applicant = serializers.CharField(source='applicant.full_name', required=False)
-    bladetype_received = serializers.CharField(source='bladetype_received.my_spec', default='null')
-    receiver = serializers.CharField(source='receiver.full_name', required=False)
-    localLv1 = serializers.CharField(source='weldinggun.location.location_level_1')
-    localLv2 = serializers.CharField(source='weldinggun.location.location_level_2')
-    localLv3 = serializers.CharField(source='weldinggun.location.location_level_3')
-    # # repair_order_img_name = serializers.CharField(source='repair_order_img.img_name', required=False)
-    repair_order_img = ImageSerializer()
-
-    # # repair_order_img_sort = serializers.IntegerField(source='repair_order_img.sort.id', required=False)
+    localLv1 = serializers.CharField(source='weldinggun.location.location_level_1', required=False)
+    localLv2 = serializers.CharField(source='weldinggun.location.location_level_2', required=False)
+    localLv3 = serializers.CharField(source='weldinggun.location.location_level_3', required=False)
+    repair_order_img = ImageSerializer(required=False)
 
     class Meta:
         model = BladeApply
@@ -105,9 +103,13 @@ class BladeItemSerializer(serializers.ModelSerializer):
         return data
 
     def create(self, validated_data):
-        repair_order_img = validated_data.pop('repair_order_img')
-        bladeitem = BladeApply.objects.create(**validated_data)
-        Images.objects.create(bladeitem=bladeitem, **repair_order_img)
+
+        blade = Parts.objects.get(pk = self.initial_data['bladetype_apply_id'])
+        weldinggun = WeldingGun.objects.get(weldinggun_num=self.initial_data['weldinggunnum'])
+        validated_data['bladetype_apply_id'] = blade.id
+        validated_data['weldinggun_id'] = weldinggun.id
+
+        bladeitem = BladeApply.objects.create(  **validated_data)
         return bladeitem
 
     def update(self, instance, validated_data):
@@ -136,11 +138,7 @@ class BladeItemSerializer(serializers.ModelSerializer):
         return super(BladeItemSerializer, self).is_valid(raise_exception)
 
 
-class WeldinggunSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = WeldingGun
-        fields = '__all__'
-        depth = 1  # 外键的序列化
+
 
 
 class MaintenanceRecordsSerializer(serializers.ModelSerializer):

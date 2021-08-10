@@ -3,7 +3,7 @@ from itertools import chain
 import django_filters
 from django.db.models import Q
 
-from workstation.models import BladeApply
+from workstation.models import BladeApply, MaintenanceRecords
 
 
 class WeldinggunsFilter(django_filters.rest_framework.FilterSet):
@@ -29,5 +29,27 @@ class WeldinggunsFilter(django_filters.rest_framework.FilterSet):
 
     class Meta:
         model = BladeApply
+        # 用于查询的字段
+        fields = ['localLv1', 'localLv2', 'localLv3']
+
+class MaintenanceRecordsFilter(django_filters.rest_framework.FilterSet):
+    """用于工位查询的过滤器"""
+
+    def location_filter(self, queryset, name, value):
+        print(name)
+        print(name)
+        datas = value.split(',')
+        final_queryset = BladeApply.objects.none()
+        for data in datas:
+            if name == 'localLv1':
+                final_queryset = final_queryset | queryset.filter(localLv1=data)
+            elif name == 'localLv2':
+                final_queryset = final_queryset | queryset.filter(localLv2=data)
+            elif name == 'localLv3':
+                final_queryset = final_queryset | queryset.filter(localLv3=data)
+        return final_queryset
+
+    class Meta:
+        model = MaintenanceRecords
         # 用于查询的字段
         fields = ['localLv1', 'localLv2', 'localLv3']

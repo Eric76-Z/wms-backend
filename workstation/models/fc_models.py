@@ -107,6 +107,7 @@ class MaintenanceRecords(models.Model):
                                  blank=True, null=True,
                                  verbose_name="归纳人")
     maintenance_worker = models.ManyToManyField(UserProfile, blank=True, verbose_name="维修人员")
+
     sort = models.CharField(max_length=32, blank=True, null=True, verbose_name="故障类型")  # 设备故障、高频故障
     device_type = models.CharField(max_length=32, blank=True, null=True, verbose_name="设备")
     workstation = models.CharField(max_length=32, blank=True, null=True, verbose_name="工位")
@@ -122,6 +123,7 @@ class MaintenanceRecords(models.Model):
     duration = models.IntegerField(blank=True, null=True, verbose_name="持续时间")
     create_time = models.DateTimeField(auto_now_add=True, blank=True, null=True, verbose_name="创建时间")
     update_time = models.DateTimeField(auto_now=True, blank=True, null=True, verbose_name="更新时间")
+    maintenance_status = models.IntegerField(blank=True,null=True, verbose_name="故障状态", choices=((1, '完全修复'), (2, '临时修复')))
     order_status = models.IntegerField(blank=True, null=True, verbose_name="订单状态")
 
     class Meta:

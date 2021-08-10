@@ -12,7 +12,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
 
-from utils.filters import WeldinggunsFilter
+from utils.filters import WeldinggunsFilter, MaintenanceRecordsFilter
 from workstation.models import MyLocation, BladeApply, Images, WeldingGun, Robot, MaintenanceRecords, Parts
 from workstation.serializers import LocationSerializer, BladeItemSerializer, ImageSerializer, WeldinggunSerializer, \
     MaintenanceRecordsSerializer, PartsSerializer
@@ -98,6 +98,7 @@ class BladeItemViewSet(ModelViewSet):
     serializer_class = BladeItemSerializer
     pagination_class = MyPageNumberPagination
     filter_backends = (OrderingFilter, DjangoFilterBackend, SearchFilter,)
+    filterset_class = WeldinggunsFilter
     ordering_fields = ('create_time',)
     ordering = ('-create_time',)  # 默认排序
     search_fields = ('weldinggun__weldinggun_num',)
@@ -162,7 +163,7 @@ class MaintenanceRecordsViewSet(ModelViewSet):
     serializer_class = MaintenanceRecordsSerializer
     pagination_class = MyPageNumberPagination
     filter_backends = (OrderingFilter, DjangoFilterBackend, SearchFilter,)
-    # filterset_class = WeldinggunsFilter
+    filterset_class = MaintenanceRecordsFilter
     ordering_fields = ('create_time',)
     ordering = ('-create_time',)  # 默认排序
     # search_fields = ('',)

@@ -100,6 +100,13 @@ class WeldingGunDamage(models.Model):
 
 
 class MaintenanceRecords(models.Model):
+    '''
+    1:申报
+    2:失效
+    3:待审核
+    4:待操作
+    5:完成
+    '''
     applicant = models.ForeignKey(UserProfile, models.DO_NOTHING, related_name='maintenancerecords_applicant_myuser',
                                   blank=True, null=True,
                                   verbose_name="上传人")
@@ -107,7 +114,6 @@ class MaintenanceRecords(models.Model):
                                  blank=True, null=True,
                                  verbose_name="归纳人")
     maintenance_worker = models.ManyToManyField(UserProfile, blank=True, verbose_name="维修人员")
-
     sort = models.CharField(max_length=32, blank=True, null=True, verbose_name="故障类型")  # 设备故障、高频故障
     device_type = models.CharField(max_length=32, blank=True, null=True, verbose_name="设备")
     workstation = models.CharField(max_length=32, blank=True, null=True, verbose_name="工位")
@@ -116,7 +122,9 @@ class MaintenanceRecords(models.Model):
     localLv3 = models.CharField(max_length=16, blank=True, null=True, verbose_name="三级地点")
     car_model = models.CharField(max_length=32, blank=True, null=True, verbose_name="车型")
     maintenance_record = models.TextField(blank=True, null=True, verbose_name="维修记录")
+    need_summary = models.BooleanField(default=0,  verbose_name="是否需要总结")
     experience_summary = models.TextField(blank=True, null=True, verbose_name="经验总结")
+
     order_comments = models.CharField(max_length=255, blank=True, null=True, verbose_name="备注")
     start_time = models.DateTimeField(blank=True, null=True, verbose_name="开始时间")
     end_time = models.DateTimeField(blank=True, null=True, verbose_name="结束时间")

@@ -149,12 +149,15 @@ class MaintenanceRecordsSerializer(serializers.ModelSerializer):
         depth = 1  # 外键的序列化
 
     def is_valid(self, raise_exception=False):
-        local = self.initial_data['MyLocation'].split('-')
-        super(MaintenanceRecordsSerializer, self).is_valid(raise_exception)
-        self.validated_data['applicant_id'] = self.initial_data['applicant_id']
-        self.validated_data['localLv1'] = local[0]
-        self.validated_data['localLv2'] = local[1]
-        self.validated_data['localLv3'] = local[2]
+        try:
+            local = self.initial_data['MyLocation'].split('-')
+            super(MaintenanceRecordsSerializer, self).is_valid(raise_exception)
+            self.validated_data['applicant_id'] = self.initial_data['applicant_id']
+            self.validated_data['localLv1'] = local[0]
+            self.validated_data['localLv2'] = local[1]
+            self.validated_data['localLv3'] = local[2]
+        except:
+            pass
         # print(self.validated_data)
         return super(MaintenanceRecordsSerializer, self).is_valid(raise_exception)
 

@@ -21,10 +21,14 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
         data['userId'] = self.user.id
         data['isSuper'] = self.user.is_superuser
         try:
+            data['lastname'] = self.user.last_name
+            data['firstname'] = self.user.first_name
             data['realname'] = self.user.last_name + self.user.first_name
             data['phonenum'] = self.user.phonenum
             data['email'] = self.user.email
         except:
+            data['lastname'] = 'null'
+            data['firstname'] = 'null'
             data['realname'] = 'null'
             data['phonenum'] = 'null'
             data['phonenum'] = 'null'

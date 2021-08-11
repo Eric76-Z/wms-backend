@@ -1,6 +1,8 @@
 from rest_framework import generics
+from rest_framework.viewsets import ModelViewSet
 
-from myuser.serializers import UserRegSerializer, MyTokenObtainPairSerializer
+from myuser.models import UserProfile
+from myuser.serializers import UserRegSerializer, MyTokenObtainPairSerializer, UserProfileSerializer
 
 from rest_framework_simplejwt.views import TokenObtainPairView
 
@@ -38,7 +40,13 @@ class RegisterView(generics.CreateAPIView):
     # user.save()
     # return Response({'code': 0, 'msg': '注册成功'})
 
-#
+
+class UsersViewSet(ModelViewSet):
+    queryset = UserProfile.objects.all()
+    serializer_class = UserProfileSerializer
+    read_only_fields = []
+
+
 #     @action(methods=['post'], detail=True)
 #     def set_password(self, request, pk=None):
 #         user = self.get_object()

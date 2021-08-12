@@ -60,7 +60,8 @@ ROOT_URLCONF = 'wms.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates']
+        # 'DIRS': [BASE_DIR / 'dist']
+        'DIRS': [os.path.join(BASE_DIR, 'dist')]
         ,
         'APP_DIRS': True,
         'OPTIONS': {
@@ -94,7 +95,7 @@ DATABASES = {
         'PORT': 3306,  # 数据库端口
         'USER': 'root',  # 数据库用户名
         'PASSWORD': 'Linux1175@',  # 数据库用户密码
-        'NAME': 'wms'  # 数据库名字
+        'NAME': 'wms-v2'  # 数据库名字
     }
 }
 
@@ -141,9 +142,13 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
+# 前端路径
+# FRONTEND_ROOT = 'dist'
 STATIC_URL = '/static/'
+# STATIC_ROOT = os.path.join(BASE_DIR, 'dist/static')
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static'),
+    os.path.join(BASE_DIR, 'dist'),
+    os.path.join(BASE_DIR, 'dist/static'),
 ]
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
@@ -193,7 +198,6 @@ REST_FRAMEWORK = {
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(days=7),  # 配置过期时间
     'REFRESH_TOKEN_LIFETIME': timedelta(days=15),
-
     'ALGORITHM': 'HS256',
     'SIGNING_KEY': SECRET_KEY,
     'VERIFYING_KEY': None,

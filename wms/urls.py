@@ -15,15 +15,15 @@ Including another URLconf
 """
 # from django.contrib import admin
 from django.urls import path, include, re_path
+from django.views.generic import TemplateView
 from django.views.static import serve
 from rest_framework.documentation import include_docs_urls
 
-from wms import views
 from wms.settings import MEDIA_ROOT
 
 urlpatterns = [
     #    path('admin/', admin.site.urls),
-    path(r'',views.index,name="index"),
+    path('', TemplateView.as_view(template_name="index.html")),
     path('workstation/', include('workstation.urls')),
     path('myuser/', include('myuser.urls')),
     path('docs/', include_docs_urls(title="WMS API 文档", description="描述信息")),

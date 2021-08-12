@@ -42,7 +42,7 @@ class Images(models.Model):
     update_time = models.DateTimeField(auto_now=True, blank=True, null=True, verbose_name="更新时间")
 
     class Meta:
-        db_table = 'Images'
+        db_table = 'images'
 
     def __str__(self):
         return self.img_name

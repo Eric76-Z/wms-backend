@@ -40,6 +40,32 @@ class UserProfileSerializer(serializers.ModelSerializer):
         model = UserProfile
         exclude = ['password']
 
+    def to_representation(self, value):
+        """重写返回的数据（添加额外字段）"""
+        # print('eeeeeeee')
+        # print(value)
+        data = super().to_representation(value)
+        user = UserProfile.objects.get(phonenum=data['phonenum'])
+        try:
+            data['realname'] = user.last_name + user.first_name
+        except:
+            data['realname'] = 'null'
+        # 返回处理之后的数据
+        data['id'] = user.id
+        data['isSuper'] = user.is_superuser
+        data['groups'] = user.groups.values_list('name', flat=True)
+        data_back={
+            'email': data['email'],
+            'firstname': data['first_name'],
+            'lastname': data['last_name'],
+            'realname': data['realname'],
+            'groups': data['groups'],
+            'isSuper': data['isSuper'],
+            'phonenum': data['phonenum'],
+            'userId': data['id'],
+            'username': data['username']
+        }
+        return data_back
 
 class UserRegSerializer(serializers.ModelSerializer):
     password1 = serializers.CharField(label='确认密码', help_text='确认密码',

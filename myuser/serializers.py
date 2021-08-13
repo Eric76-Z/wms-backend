@@ -7,7 +7,6 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from myuser.models import UserProfile
 
 
-
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     def validate(self, attrs):
         data = super().validate(attrs)
@@ -21,17 +20,18 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
         data['userId'] = self.user.id
         data['isSuper'] = self.user.is_superuser
         try:
-            data['lastname'] = self.user.last_name
-            data['firstname'] = self.user.first_name
+            data['last_name'] = self.user.last_name
+            data['first_name'] = self.user.first_name
             data['realname'] = self.user.last_name + self.user.first_name
             data['phonenum'] = self.user.phonenum
             data['email'] = self.user.email
         except:
-            data['lastname'] = 'null'
-            data['firstname'] = 'null'
+            data['last_name'] = 'null'
+            data['first_name'] = 'null'
             data['realname'] = 'null'
             data['phonenum'] = 'null'
-            data['phonenum'] = 'null'
+            data['email'] = 'null'
+        print(data)
         return data
 
 
@@ -54,18 +54,20 @@ class UserProfileSerializer(serializers.ModelSerializer):
         data['id'] = user.id
         data['isSuper'] = user.is_superuser
         data['groups'] = user.groups.values_list('name', flat=True)
-        data_back={
+        data_back = {
             'email': data['email'],
-            'firstname': data['first_name'],
-            'lastname': data['last_name'],
             'realname': data['realname'],
+            'first_name': data['first_name'],
+            'last_name': data['last_name'],
             'groups': data['groups'],
             'isSuper': data['isSuper'],
             'phonenum': data['phonenum'],
             'userId': data['id'],
             'username': data['username']
         }
+        print(data_back)
         return data_back
+
 
 class UserRegSerializer(serializers.ModelSerializer):
     password1 = serializers.CharField(label='确认密码', help_text='确认密码',

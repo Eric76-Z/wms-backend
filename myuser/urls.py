@@ -14,7 +14,7 @@ urlpatterns = [
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     # 验证token
     path('api/token/verify/', TokenVerifyView.as_view(), name='token_verify'),
-    path(r'login/', MyTokenObtainPairView.as_view()),
+    path('login/', MyTokenObtainPairView.as_view()),
     path('register/', RegisterView.as_view())
 ]
 

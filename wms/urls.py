@@ -22,10 +22,8 @@ from rest_framework.documentation import include_docs_urls
 from wms.settings import MEDIA_ROOT
 
 urlpatterns = [
-    #    path('admin/', admin.site.urls),
-    path('', TemplateView.as_view(template_name="index.html")),
-    path('workstation/', include('workstation.urls')),
-    path('myuser/', include('myuser.urls')),
+    path('api/workstation/', include('workstation.urls')),
+    path('api/myuser/', include('myuser.urls')),
     path('docs/', include_docs_urls(title="WMS API 文档", description="描述信息")),
     re_path(r'media/(?P<path>.*)$', serve, {'document_root': MEDIA_ROOT}),
 ]

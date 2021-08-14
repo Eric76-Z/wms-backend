@@ -21,8 +21,8 @@ REQUIRE_LOGIN = [
 
 class AuthMiddleware(MiddlewareMixin):
     def process_request(self, request):
-        # print('wwwwwwwwwwwwwwwwwwww')
-        print(request.META.get('HTTP_AUTHORIZATION'))
+        pass
+        # print(request.META.get('HTTP_AUTHORIZATION'))
         # if request.META.get('HTTP_AUTHORIZATION'):
         #     token = request.META.get('HTTP_AUTHORIZATION')
         #     decoded_data = jwt.decode(token, settings.SECRET_KEY, algorithms=["HS256"])

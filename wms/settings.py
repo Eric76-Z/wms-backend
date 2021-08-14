@@ -95,7 +95,7 @@ DATABASES = {
         'PORT': 3306,  # 数据库端口
         'USER': 'root',  # 数据库用户名
         'PASSWORD': 'Linux1175@',  # 数据库用户密码
-        'NAME': 'wms-v2'  # 数据库名字
+        'NAME': 'wms'  # 数据库名字
     }
 }
 

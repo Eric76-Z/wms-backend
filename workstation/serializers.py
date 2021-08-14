@@ -40,6 +40,7 @@ class ImageSerializer(serializers.ModelSerializer):
         model = Images
         fields = ('img_name', 'img')
 
+
 class WeldinggunSerializer(serializers.ModelSerializer):
     class Meta:
         model = WeldingGun
@@ -66,10 +67,11 @@ class BladeItemSerializer(serializers.ModelSerializer):
     def to_representation(self, value):
         """重写返回的数据（添加额外字段）"""
         data = super().to_representation(value)
-        # print(data)
         # 获取接口权重数据进行组装
+
         dicts = BladeApply.objects.filter(
-            Q(order_status=4) & Q(weldinggun__weldinggun_num=data['weldinggun'])).order_by('-create_time')
+            Q(order_status=4) & Q(weldinggun__weldinggun_num=data['weldinggun']['weldinggun_num'])).order_by(
+            '-create_time')
         last_replace = '首次领用'
         if dicts.exists():
             if data['order_status'] == 4:
@@ -82,7 +84,11 @@ class BladeItemSerializer(serializers.ModelSerializer):
                         except:
                             last_replace = '首次领用'
             else:
-                last_replace = dicts.values()[0]['create_time']
+                for dict in dicts.values():
+
+                    if BladeApply.objects.get(pk=data['id']).create_time > dict['create_time']:
+                        last_replace = dicts.values()[0]['create_time']
+                        break
         else:
             last_replace = '首次领用'
 
@@ -104,17 +110,22 @@ class BladeItemSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
 
-        blade = Parts.objects.get(pk = self.initial_data['bladetype_apply_id'])
+        blade = Parts.objects.get(pk=self.initial_data['bladetype_apply_id'])
         weldinggun = WeldingGun.objects.get(weldinggun_num=self.initial_data['weldinggunnum'])
         validated_data['bladetype_apply_id'] = blade.id
         validated_data['weldinggun_id'] = weldinggun.id
 
-        bladeitem = BladeApply.objects.create(  **validated_data)
+        bladeitem = BladeApply.objects.create(**validated_data)
         return bladeitem
 
     def update(self, instance, validated_data):
         print(instance)
         print(validated_data)
+        try:  # 领用按钮
+            validated_data['bladetype_received_id'] = self.initial_data['bladetype_received_id']
+            validated_data['receiver_id'] = self.initial_data['receiver_id']
+        except:
+            pass
         super().update(instance, validated_data)
         return instance
 
@@ -122,9 +133,7 @@ class BladeItemSerializer(serializers.ModelSerializer):
         if self.initial_data.get("img"):
             bladeitem = BladeApply.objects.get(pk=self.initial_data['id'])
             if bladeitem.repair_order_img_id:
-                print(bladeitem.repair_order_img_id)
                 image = Images.objects.get(pk=bladeitem.repair_order_img_id)
-
                 file_delete(image)  # 删除文件
 
             image = Images.objects.create(
@@ -136,9 +145,6 @@ class BladeItemSerializer(serializers.ModelSerializer):
             self.validated_data['repair_order_img_id'] = image.id
             self.validated_data['complete_time'] = datetime.datetime.now()
         return super(BladeItemSerializer, self).is_valid(raise_exception)
-
-
-
 
 
 class MaintenanceRecordsSerializer(serializers.ModelSerializer):

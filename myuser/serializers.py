@@ -42,8 +42,6 @@ class UserProfileSerializer(serializers.ModelSerializer):
 
     def to_representation(self, value):
         """重写返回的数据（添加额外字段）"""
-        # print('eeeeeeee')
-        # print(value)
         data = super().to_representation(value)
         user = UserProfile.objects.get(phonenum=data['phonenum'])
         try:

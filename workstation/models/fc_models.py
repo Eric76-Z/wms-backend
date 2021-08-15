@@ -4,7 +4,7 @@ import uuid
 from django.db import models
 
 from myuser.models.user_models import UserProfile
-from workstation.models.base_models import Files, Images
+from workstation.models.base_models import Files, Images, Articles
 from workstation.models.device_models import WeldingGun, Robot
 from workstation.models.parts_models import Parts
 
@@ -100,13 +100,6 @@ class WeldingGunDamage(models.Model):
 
 
 class MaintenanceRecords(models.Model):
-    '''
-    1:申报
-    2:失效
-    3:待审核
-    4:待操作
-    5:完成
-    '''
     applicant = models.ForeignKey(UserProfile, models.DO_NOTHING, related_name='maintenancerecords_applicant_myuser',
                                   blank=True, null=True,
                                   verbose_name="上传人")
@@ -122,16 +115,17 @@ class MaintenanceRecords(models.Model):
     localLv3 = models.CharField(max_length=16, blank=True, null=True, verbose_name="三级地点")
     car_model = models.CharField(max_length=32, blank=True, null=True, verbose_name="车型")
     maintenance_record = models.TextField(blank=True, null=True, verbose_name="维修记录")
-    need_summary = models.BooleanField(default=0,  verbose_name="是否需要总结")
-    experience_summary = models.TextField(blank=True, null=True, verbose_name="经验总结")
-
+    need_summary = models.BooleanField(default=0, verbose_name="是否需要总结")
+    experience_summary = models.ForeignKey(Articles, on_delete=models.SET_NULL, blank=True, null=True,
+                                           verbose_name="经验总结")
     order_comments = models.CharField(max_length=255, blank=True, null=True, verbose_name="备注")
     start_time = models.DateTimeField(blank=True, null=True, verbose_name="开始时间")
     end_time = models.DateTimeField(blank=True, null=True, verbose_name="结束时间")
     duration = models.IntegerField(blank=True, null=True, verbose_name="持续时间")
     create_time = models.DateTimeField(auto_now_add=True, blank=True, null=True, verbose_name="创建时间")
     update_time = models.DateTimeField(auto_now=True, blank=True, null=True, verbose_name="更新时间")
-    maintenance_status = models.IntegerField(blank=True,null=True, verbose_name="故障状态", choices=((1, '完全修复'), (2, '临时修复')))
+    maintenance_status = models.IntegerField(blank=True, null=True, verbose_name="故障状态",
+                                             choices=((1, '完全修复'), (2, '临时修复')))
     order_status = models.IntegerField(blank=True, null=True, verbose_name="订单状态")
 
     class Meta:

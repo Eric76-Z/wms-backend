@@ -159,3 +159,5 @@ dmypy.json
 .pyre/
 *.swo
 
+#xadmin
+extra-apps/xadmin-django2

@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 import os
+import sys
 from datetime import timedelta
 from pathlib import Path
 
@@ -95,7 +96,7 @@ DATABASES = {
         'PORT': 3306,  # 数据库端口
         'USER': 'root',  # 数据库用户名
         'PASSWORD': 'Linux1175@',  # 数据库用户密码
-        'NAME': 'wms'  # 数据库名字
+        'NAME': 'wms-v2'  # 数据库名字
     }
 }
 
@@ -212,3 +213,5 @@ CORS_ALLOW_CREDENTIALS = True
 CORS_ORIGIN_ALLOW_ALL = True
 # 允许所有的请求头
 CORS_ALLOW_HEADERS = ('*')
+
+# sys.path.insert(0,os.path.join(BASE_DIR, 'extra_apps'))

@@ -1,7 +1,8 @@
 from django.db import models
+
+from myuser.models import UserProfile
 from workstation.models import PermissionType
 from utils.utils import FilePath
-
 
 
 class MySort(models.Model):
@@ -36,7 +37,7 @@ class Files(models.Model):
 class Images(models.Model):
     permission = models.ManyToManyField(PermissionType, blank=True, verbose_name="权限")
     img_name = models.CharField(max_length=64, verbose_name='图片名')
-    img = models.ImageField(null=True, blank=True, upload_to=FilePath,  verbose_name="图片")
+    img = models.ImageField(null=True, blank=True, upload_to=FilePath, verbose_name="图片")
     sort = models.ForeignKey(MySort, on_delete=models.DO_NOTHING, blank=True, null=True, verbose_name='分类')
     create_time = models.DateTimeField(auto_now_add=True, blank=True, null=True, verbose_name="创建时间")
     update_time = models.DateTimeField(auto_now=True, blank=True, null=True, verbose_name="更新时间")
@@ -73,3 +74,26 @@ class MyTag(models.Model):
 
     def __str__(self):
         return self.tag_name
+
+
+class Articles(models.Model):
+    main_author = models.ForeignKey(UserProfile, related_name='main_author', on_delete=models.SET_NULL, blank=True,
+                                    null=True,
+                                    verbose_name="第一作者")
+    authors = models.ManyToManyField(UserProfile, related_name='authors', blank=True, verbose_name="作者")
+    title = models.CharField(max_length=64, verbose_name="标题")
+    # 文章正文。保存大量文本使用 TextField
+    body = models.TextField()
+    sort = models.ForeignKey(MySort, blank=True, null=True, on_delete=models.SET_NULL, verbose_name="分类")
+    log = models.ManyToManyField(MyLog, blank=True, verbose_name="日志")
+    tag = models.ManyToManyField(MyTag, blank=True, verbose_name="标签")
+    create_time = models.DateTimeField(auto_now_add=True, blank=True, null=True, verbose_name="创建时间")
+    update_time = models.DateTimeField(auto_now=True, blank=True, null=True, verbose_name="更新时间")
+
+    # 内部类 class Meta 用于给 model 定义元数据
+    class Meta:
+        db_table = 'articles'
+        ordering = ('-create_time',)
+
+    def __str__(self):
+        return self.title

@@ -10,7 +10,7 @@ from rest_framework import serializers
 from myuser.models import UserProfile
 from utils.utils import SecondToLast
 from wms import settings
-from workstation.models import MyLocation, BladeApply, Images, WeldingGun, MaintenanceRecords, Parts
+from workstation.models import MyLocation, BladeApply, Images, WeldingGun, MaintenanceRecords, Parts, Articles, MySort
 
 
 @receiver(pre_delete, sender=Images)  # sender=你要删除或修改文件字段所在的类**
@@ -135,6 +135,7 @@ class BladeItemSerializer(serializers.ModelSerializer):
             if bladeitem.repair_order_img_id:
                 image = Images.objects.get(pk=bladeitem.repair_order_img_id)
                 file_delete(image)  # 删除文件
+                image.delete()
 
             image = Images.objects.create(
                 img_name='roimg-' + str(bladeitem.repair_order_num),
@@ -149,6 +150,7 @@ class BladeItemSerializer(serializers.ModelSerializer):
 
 class MaintenanceRecordsSerializer(serializers.ModelSerializer):
     # token = serializers.CharField(label='生成token', read_only=True)
+
     class Meta:
         model = MaintenanceRecords
         fields = '__all__'
@@ -166,6 +168,33 @@ class MaintenanceRecordsSerializer(serializers.ModelSerializer):
             pass
         # print(self.validated_data)
         return super(MaintenanceRecordsSerializer, self).is_valid(raise_exception)
+
+    def update(self, instance, validated_data):
+        try:
+            if self.initial_data['experience_summary']:
+                validated_data['id'] = self.initial_data['id']
+                validated_data['userId'] = self.initial_data['userId']
+                validated_data['title'] = self.initial_data['title']
+                validated_data['experience_summary'] = self.initial_data['experience_summary']
+                mtr = MaintenanceRecords.objects.get(pk=validated_data['id'])
+                # 判断是否已存在总结
+                if mtr.experience_summary_id:
+                    article = Articles.objects.get(id=mtr.experience_summary_id)
+                    article.title = validated_data['title']
+                    article.body = validated_data['experience_summary']
+                    article.save()
+                else:
+                    article = Articles.objects.create(title=validated_data['title'],
+                                                      body=validated_data['experience_summary'],
+                                                      main_author_id=validated_data['userId'], sort_id=44)
+                    mtr.experience_summary = article
+                    mtr.save()
+        except:
+            print(self.errors)
+            pass
+
+        print(self.initial_data)
+        return instance
 
 
 class PartsSerializer(serializers.ModelSerializer):

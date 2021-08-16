@@ -13,10 +13,10 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
         refresh = self.get_token(self.user)
         data['refresh'] = str(refresh)
         data['token'] = str(refresh.access_token)
-
         # Add extra responses here
         data['username'] = self.user.username
         data['groups'] = self.user.groups.values_list('id', flat=True)
+        print(self.user.id)
         data['userId'] = self.user.id
         data['isSuper'] = self.user.is_superuser
         try:
@@ -105,7 +105,6 @@ class UserRegSerializer(serializers.ModelSerializer):
 
     def to_representation(self, value):
         """重写返回的数据（添加额外字段）"""
-        print(value)
         data = super().to_representation(value)
         user = UserProfile.objects.get(phonenum=data['phonenum'])
         try:
@@ -114,9 +113,24 @@ class UserRegSerializer(serializers.ModelSerializer):
             data['realname'] = 'null'
         # 返回处理之后的数据
         data.pop('password')
-        data['id'] = user.id
+        data['userId'] = user.id
         data['isSuper'] = user.is_superuser
         data['groups'] = user.groups.values_list('name', flat=True)
-        return data
+        data['first_name'] = user.first_name
+        data['last_name'] = user.last_name
+        data['id'] = user.id
+        print(data)
+        data_back = {
+            'email': data['email'],
+            'realname': data['realname'],
+            'first_name': data['first_name'],
+            'last_name': data['last_name'],
+            'groups': data['groups'],
+            'isSuper': data['isSuper'],
+            'phonenum': data['phonenum'],
+            'userId': data['id'],
+            'username': data['username']
+        }
+        return data_back
 
     # def perform_create(self):

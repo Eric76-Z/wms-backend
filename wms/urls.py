@@ -13,21 +13,18 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-# # from django.contrib import admin
 
-# xadmin.autodiscover()
-
-# # version模块自动注册需要版本控制的 Model
-# from xadmin.plugins import xversion
-# xversion.register_models()
 from django.urls import path, include, re_path
 from django.views.generic import TemplateView
 from django.views.static import serve
 from rest_framework.documentation import include_docs_urls
 
+import xadmin
 from wms.settings import MEDIA_ROOT
 
+
 urlpatterns = [
+    path('admin/', xadmin.site.urls, name='xadmin'),
     path('api/workstation/', include('workstation.urls')),
     path('api/myuser/', include('myuser.urls')),
     path('docs/', include_docs_urls(title="WMS API 文档", description="描述信息")),

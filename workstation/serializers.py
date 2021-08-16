@@ -119,8 +119,8 @@ class BladeItemSerializer(serializers.ModelSerializer):
         return bladeitem
 
     def update(self, instance, validated_data):
-        print(instance)
-        print(validated_data)
+        # print(instance)
+        # print(validated_data)
         try:  # 领用按钮
             validated_data['bladetype_received_id'] = self.initial_data['bladetype_received_id']
             validated_data['receiver_id'] = self.initial_data['receiver_id']

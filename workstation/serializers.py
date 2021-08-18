@@ -176,10 +176,10 @@ class MaintenanceRecordsSerializer(serializers.ModelSerializer):
                 validated_data['userId'] = self.initial_data['userId']
                 validated_data['title'] = self.initial_data['title']
                 validated_data['experience_summary'] = self.initial_data['experience_summary']
-                mtr = MaintenanceRecords.objects.get(pk=validated_data['id'])
+                # mtr = MaintenanceRecords.objects.get(pk=validated_data['id'])
                 # 判断是否已存在总结
-                if mtr.experience_summary_id:
-                    article = Articles.objects.get(id=mtr.experience_summary_id)
+                if instance.experience_summary_id:
+                    article = Articles.objects.get(id=instance.experience_summary_id)
                     article.title = validated_data['title']
                     article.body = validated_data['experience_summary']
                     article.save()
@@ -187,14 +187,12 @@ class MaintenanceRecordsSerializer(serializers.ModelSerializer):
                     article = Articles.objects.create(title=validated_data['title'],
                                                       body=validated_data['experience_summary'],
                                                       main_author_id=validated_data['userId'], sort_id=44)
-                    mtr.experience_summary = article
-                    mtr.save()
+                    instance.experience_summary = article
+                    instance.save()
         except:
-            print(self.errors)
             pass
-
-        print(self.initial_data)
         return instance
+
 
 
 class PartsSerializer(serializers.ModelSerializer):

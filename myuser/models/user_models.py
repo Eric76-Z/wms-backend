@@ -46,7 +46,7 @@ class UserProfile(AbstractUser):
     # password = models.CharField(max_length=32, blank=True, null=True)
     phonenum = models.CharField(max_length=11, blank=True, null=True, verbose_name="手机号", unique=True)
     worknum = models.IntegerField(blank=True, null=True, verbose_name="工号", unique=True)
-    # email = models.CharField(max_length=32, blank=True, null=True)
+    # email = models.EmailField(max_length=32, blank=True, null=True)
     # profile = models.ForeignKey(Files, models.CASCADE, blank=True, null=True, verbose_name="头像")
     is_onwork = models.BooleanField(default=False, verbose_name="是否在岗")
     # is_online = models.BooleanField(default=False, verbose_name="是否在线")

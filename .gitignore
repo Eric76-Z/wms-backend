@@ -160,5 +160,6 @@ dmypy.json
 *.swo
 
 #xadmin
-extra-apps/xadmin3
+extra_apps/xadmin3
+/extra_apps/
 /extra_apps/

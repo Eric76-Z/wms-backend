@@ -109,12 +109,13 @@ class BladeItemSerializer(serializers.ModelSerializer):
         return data
 
     def create(self, validated_data):
-
+        print(validated_data)
+        user = UserProfile.objects.get(pk=self.initial_data['applicant_id'])
         blade = Parts.objects.get(pk=self.initial_data['bladetype_apply_id'])
         weldinggun = WeldingGun.objects.get(weldinggun_num=self.initial_data['weldinggunnum'])
         validated_data['bladetype_apply_id'] = blade.id
         validated_data['weldinggun_id'] = weldinggun.id
-
+        validated_data['applicant_id'] = user.id
         bladeitem = BladeApply.objects.create(**validated_data)
         return bladeitem
 

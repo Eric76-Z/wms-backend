@@ -195,9 +195,8 @@ class MaintenanceRecordsSerializer(serializers.ModelSerializer):
         return instance
 
 
-
 class PartsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Parts
         fields = '__all__'
-        depth = 1  # 外键的序列化
+        depth = 2  # 外键的序列化

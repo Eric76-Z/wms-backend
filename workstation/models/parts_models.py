@@ -1,11 +1,11 @@
 from django.db import models
 
-
 from workstation.models import Company
 from workstation.models.base_models import Files, MySort, MyLog, MyTag, Images
 from workstation.models.location_models import MyLocation
 from workstation.models.device_models import DevicesType
 from myuser.models import UserProfile
+
 
 # 备件备案表
 class Parts(models.Model):
@@ -14,14 +14,16 @@ class Parts(models.Model):
     price = models.FloatField(blank=True, null=True, verbose_name="价格")
     order_num = models.CharField(max_length=255, blank=True, null=True, verbose_name="订货号")
     setech_spec = models.CharField(max_length=255, blank=True, null=True, verbose_name="西泰克规格")
-    brand = models.ForeignKey(Company, models.DO_NOTHING, related_name='brand_company', blank=True, null=True, verbose_name="品牌")
-    supplier = models.ForeignKey(Company, models.DO_NOTHING, related_name='supplier_company', blank=True, null=True, verbose_name="供应商")
+    brand = models.ForeignKey(Company, models.DO_NOTHING, related_name='brand_company', blank=True, null=True,
+                              verbose_name="品牌")
+    supplier = models.ForeignKey(Company, models.DO_NOTHING, related_name='supplier_company', blank=True, null=True,
+                                 verbose_name="供应商")
     cordon = models.IntegerField(blank=True, null=True, verbose_name="警戒线")
     min_line = models.IntegerField(blank=True, null=True, verbose_name="底线")
     unit = models.CharField(max_length=16, blank=True, null=True, verbose_name="单位")
-    part_file = models.ManyToManyField(Images, blank=True,  verbose_name="备件图")
+    part_img = models.ManyToManyField(Images, blank=True, verbose_name="备件图")
     mark = models.CharField(max_length=255, blank=True, null=True, verbose_name="备注")
-    usefor = models.IntegerField(blank=True, null=True, verbose_name="用途")
+    desc = models.CharField(max_length=255, blank=True, null=True, verbose_name="描述")
     device_type = models.ManyToManyField(DevicesType, blank=True, verbose_name="所属设备")
     f_part_id = models.IntegerField(blank=True, null=True, verbose_name="父备件id")
     sort = models.ManyToManyField(MySort, blank=True, verbose_name="分类")
@@ -29,6 +31,7 @@ class Parts(models.Model):
     update_time = models.DateTimeField(auto_now=True, blank=True, null=True, verbose_name="更新时间")
     log = models.ManyToManyField(MyLog, blank=True)
     tag = models.ManyToManyField(MyTag, blank=True)
+    hot = models.IntegerField(blank=True, null=True, verbose_name='热度')
 
     class Meta:
         db_table = 'parts'
@@ -37,6 +40,7 @@ class Parts(models.Model):
 
     def __str__(self):
         return self.my_spec
+
 
 # 备件库存表
 class Stock(models.Model):
@@ -75,6 +79,7 @@ class Orders(models.Model):
     def __str__(self):
         return self.part.my_spec
 
+
 # 备件领用表
 class Consuming(models.Model):
     user = models.ForeignKey(UserProfile, models.DO_NOTHING, blank=True, null=True, verbose_name="人员")
@@ -91,7 +96,6 @@ class Consuming(models.Model):
 
     def __str__(self):
         return self.stock_id.part.my_spec
-
 
 # class Part(models.Model):
 #     MaterialNumSetec = models.CharField(max_length=16, null=True, blank=True, verbose_name='西泰克物料号')

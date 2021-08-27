@@ -27,11 +27,11 @@ class MyPageNumberPagination(PageNumberPagination):
 class PartsViewSet(ModelViewSet):
     queryset = Parts.objects.all()
     serializer_class = PartsSerializer
-    # pagination_class = MyPageNumberPagination
+    pagination_class = MyPageNumberPagination
     filter_backends = (OrderingFilter, DjangoFilterBackend, SearchFilter,)
     filter_fields = ('sort', 'tag',)  # 逗号必加,缺点无法模糊查询
-    ordering_fields = ('create_time',)
-    ordering = ('-create_time',)  # 默认排序
+    ordering_fields = ('hot',)
+    ordering = ('-hot',)  # 默认排序
     search_fields = ('part_num', 'my_spec', 'order_num', 'brand__company_name', 'supplier__company_name')
 
 

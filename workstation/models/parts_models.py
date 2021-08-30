@@ -1,13 +1,15 @@
 from django.db import models
 
 from workstation.models import Company
-from workstation.models.base_models import Files, MySort, MyLog, MyTag, Images
+from workstation.models.base_models import MySort, MyLog, MyTag, Images
 from workstation.models.location_models import MyLocation
 from workstation.models.device_models import DevicesType
 from myuser.models import UserProfile
 
 
 # 备件备案表
+
+
 class Parts(models.Model):
     part_num = models.CharField(max_length=12, blank=True, null=True, verbose_name="物料号")
     my_spec = models.CharField(max_length=255, blank=True, null=True, verbose_name="M型号")
@@ -32,6 +34,7 @@ class Parts(models.Model):
     log = models.ManyToManyField(MyLog, blank=True)
     tag = models.ManyToManyField(MyTag, blank=True)
     hot = models.IntegerField(blank=True, null=True, verbose_name='热度')
+    users = models.ManyToManyField(UserProfile, blank=True, verbose_name="收藏")
 
     class Meta:
         db_table = 'parts'

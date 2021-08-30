@@ -200,3 +200,15 @@ class PartsSerializer(serializers.ModelSerializer):
         model = Parts
         fields = '__all__'
         depth = 2  # 外键的序列化
+
+    def update(self, instance, validated_data):
+        try:
+            part = Parts.objects.get(pk=self.initial_data['id'])
+            users = UserProfile.objects.filter(id__in=self.initial_data['users'])
+            part.users.clear()
+            for user in users:
+                part.users.add(user)
+            part.save()
+        except Exception as e:
+            print(e)
+        return instance

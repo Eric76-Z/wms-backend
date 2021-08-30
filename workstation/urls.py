@@ -2,11 +2,6 @@ from django.urls import path
 from . import views, views_fc
 
 urlpatterns = [
-    # url(r'^books/$',views.BookInfoModelViewSet.as_view({"get":"list","post":"create"})),
-    # url(r'^books/(?P<pk>\d+)/$',views.BookInfoModelViewSet.as_view({"get":"retrieve","put":"update","delete":"destory"})),
-    #
-    # url(r'^books/bread/$',views.BookInfoModelViewSet.as_view({"get":"bread_book"})),
-    # url(r'^books/bread/(?P<pk>\d+)/$',views.BookInfoModelViewSet.as_view({"put":"update_book_bread"})),
 
 ]
 

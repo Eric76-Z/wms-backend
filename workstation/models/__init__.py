@@ -5,4 +5,4 @@ from workstation.models.location_models import Company, MyLocation
 from workstation.models.device_models import DevicesType, Robot, RobotE7, WeldingGun, TipDresser
 from workstation.models.fc_models import BladeApply, WeldingGunClothes, WeldingGunDamage, MaintenanceRecords
 from workstation.models.parts_models import Parts, Stock, Consuming, Orders
-
+from workstation.models.manytomany import Part2User

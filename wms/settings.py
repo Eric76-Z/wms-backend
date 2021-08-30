@@ -128,10 +128,10 @@ AUTH_PASSWORD_VALIDATORS = [
 # SMTP服务器，改为你的邮箱的smtp!
 EMAIL_HOST = 'smtp.163.com'
 EMAIL_HOST_USER = '17826859320@163.com'  # 改为你自己的邮箱名！
-EMAIL_HOST_PASSWORD = 'ETUSUGKLARTYOXYN'  # 你的邮箱密码
+EMAIL_HOST_PASSWORD = 'BGACRSEJZHMEBLBU'  # 你的邮箱密码
 EMAIL_PORT = 25  # 发送邮件的端口
 EMAIL_USE_TLS = True  # 是否使用 TLS
-DEFAULT_FROM_EMAIL = 'hasaiii的博客 <17826859320@163.com>'  # 默认的发件人
+DEFAULT_FROM_EMAIL = 'wms管理系统 <17826859320@163.com>'  # 默认的发件人
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.2/topics/i18n/

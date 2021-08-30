@@ -7,7 +7,7 @@ from rest_framework_simplejwt.views import (
 )
 
 from myuser import views
-from myuser.views import MyTokenObtainPairView, RegisterView, GetCode
+from myuser.views import MyTokenObtainPairView, RegisterView, GetCode, ResetPwd
 
 urlpatterns = [
     path('token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
@@ -16,7 +16,9 @@ urlpatterns = [
     path('api/token/verify/', TokenVerifyView.as_view(), name='token_verify'),
     path('login/', MyTokenObtainPairView.as_view()),
     path('register/', RegisterView.as_view()),
-    path('getcode/', GetCode.as_view())
+    path('getcode/', GetCode.as_view()),
+    path('resetpwd/', ResetPwd.as_view())
+
 ]
 
 # 1,创建路由对象

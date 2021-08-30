@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.db import models
 
 from myuser.models import UserProfile
@@ -97,3 +99,19 @@ class Articles(models.Model):
 
     def __str__(self):
         return self.title
+
+
+class EmailVerifyRecord(models.Model):
+    # 验证码
+    code = models.CharField(max_length=20, verbose_name="验证码")
+    email = models.EmailField(max_length=50, verbose_name="邮箱")
+    # 包含注册验证和找回验证
+    send_type = models.CharField(verbose_name="验证码类型", max_length=10,
+                                 choices=(("register", "注册"), ("forget", "找回密码"), ("reset", "重置密码")))
+    send_time = models.DateTimeField(auto_now_add=True, blank=True, null=True, verbose_name="创建时间")
+
+    class Meta:
+        db_table = "emailcode"
+
+    def __unicode__(self):
+        return '{0}({1})'.format(self.code, self.email)

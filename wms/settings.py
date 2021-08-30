@@ -85,15 +85,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'wms.wsgi.application'
 
-# Database
-# https://docs.djangoproject.com/en/3.2/ref/settings/#databases
-
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
 
 DATABASES = {
     'default': {
@@ -131,6 +122,8 @@ EMAIL_HOST_USER = '17826859320@163.com'  # 改为你自己的邮箱名！
 EMAIL_HOST_PASSWORD = 'BGACRSEJZHMEBLBU'  # 你的邮箱密码
 EMAIL_PORT = 25  # 发送邮件的端口
 EMAIL_USE_TLS = True  # 是否使用 TLS
+# 收件人看到的发件人
+EMAIL_FROM = 'wms管理系统 <17826859320@163.com>'
 DEFAULT_FROM_EMAIL = 'wms管理系统 <17826859320@163.com>'  # 默认的发件人
 
 # Internationalization
@@ -144,7 +137,7 @@ USE_I18N = True
 
 USE_L10N = True
 
-USE_TZ = True
+USE_TZ = False
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/

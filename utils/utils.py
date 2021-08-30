@@ -1,14 +1,16 @@
 import copy
 import datetime
 import uuid
+import random
 
 import pymysql
 
-
 # fields为表头，将数据库中筛选出的results与表头拼接，生成字典。不断遍历，多个字典添加到列表，最后赋值给rows
+from django.core.mail import send_mail
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
 
+from wms.settings import EMAIL_FROM
 
 
 def toRows(fields, results):
@@ -84,3 +86,49 @@ def SecondToLast(dict, dicts):
             #     return item['receive_time']
     return '首次领用'
 
+
+def CodeRandom():
+    # 随机数函数
+    _str = '1234567890'
+    return ''.join(random.choice(_str) for i in range(6))
+
+
+# 发送邮件
+def SendEmailCode(email, send_type):
+    # 第一步，创建邮箱验证码对象，保存数据库，用来以后做对比
+    from workstation.models.base_models import EmailVerifyRecord
+    email_record = EmailVerifyRecord()
+    # 将给用户发的信息保存在数据库中
+    code = CodeRandom()
+    email_record.code = code
+    email_record.email = email
+    email_record.send_type = send_type
+    email_record.save()
+    # 第二部：正式的发邮件功能
+    if send_type == 'register':
+        send_title = '欢迎注册：'
+        send_body = '请点击一下链接进行激活您的账号：\n http://127.0.0.1:8000/users/user_activate/' + code
+        send_mail(send_title, send_body, EMAIL_FROM, [email])
+    # 忘记密码
+    if send_type == 'reset':
+        send_title = 'wms--密码重置：'
+        send_body = '''您好：
+            您正在修改你的密码，您的验证码是: {}，请在5分钟之内完整密码重置。
+        '''.format(code)
+        send_status = send_mail(send_title, send_body, EMAIL_FROM,
+                                [email])
+        if not send_status == 1:
+            return {
+                'code': 0,
+                'msg': '邮件发送失败'
+            }
+        else:
+            return {
+                'code': '1',
+                'msg': '邮件发送成功'
+            }
+        # 忘记密码
+    if send_type == 'forget':
+        send_title = '更换邮箱：'
+        send_body = '请点击一下链接进行重置您的邮箱：\n http://127.0.0.1:8000/users/user_mail_reset/' + code
+        send_mail(send_title, send_body, EMAIL_FROM, [email])

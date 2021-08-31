@@ -163,3 +163,4 @@ dmypy.json
 extra_apps/xadmin3
 /extra_apps/
 /extra_apps/
+/static/

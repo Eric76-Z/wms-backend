@@ -61,7 +61,7 @@ class MyLocationAdmin(object):
 @xadmin.sites.register(models.Parts)
 class PartsAdmin(object):
     list_display = ['id', 'part_num', 'my_spec', 'order_num', 'price', 'brand', 'cordon', 'min_line', 'unit', 'mark',
-                    'usefor', 'sort']
+                    'sort']
     list_filter = ['brand', 'sort']
     search_fields = ['id', 'part_num', 'my_spec', 'setech_spec', 'order_num', 'mark']
     ordering = ['id']

@@ -44,44 +44,6 @@ class RegisterView(generics.CreateAPIView):
             else:
                 return Response({'msg': user_serializer.errors, 'code': 12})
 
-        # elif UserProfile.objects.filter(username=request.data['username']):
-        #     data['errcode'] = 12
-        #     data['msg']['username'] = '用户名已存在'
-        # elif UserProfile.objects.filter(email=request.data['email']):
-        #     data['errcode'] = 12
-        #     data['msg']['email'] = '邮箱已存在'
-        # elif UserProfile.objects.filter(phonenum=request.data['phonenum']):
-        #     data['errcode'] = 12
-        #     data['msg']['phonenum'] = '手机号已注册'
-        # else:
-        #     user = UserProfile.objects.create(username=request.data['username'], phonenum=request.data['phonenum'],
-        #                                       email=request.data['email'], last_login=datetime.datetime.now())
-        #     user.set_password(request.data['password'])
-
-    # def post(self, request):
-    #     data = request.data
-    #     username = data['username']
-    #     password = data['passowrd']
-    #     phonenum = data['phonenum']
-    #     email = data['email']
-    #
-    #     if all([username, password]):
-    #         pass
-    #     else:
-    #         return Response({'msg': '请输入用户名或密码'})
-    #     user= UserProfile
-    # email = request.data.get('username')
-    # passwrod = request.data.get('password')
-    # if all([email, passwrod]):
-    #     pass
-    # else:
-    #     return Response({'code': 9999, 'msg': '参数不全'})
-    # rand_name = self.randomUsername()
-    # user = User(username=rand_name, email=email)
-    # user.set_password(passwrod)
-    # user.save()
-    # return Response({'code': 0, 'msg': '注册成功'})
-
 
 class UsersViewSet(ModelViewSet):
     queryset = UserProfile.objects.all()
@@ -112,9 +74,7 @@ class ResetPwd(APIView):
         nowtime = datetime.datetime.now()
         expire_time = nowtime - datetime.timedelta(minutes=5)
         if email_record.send_time > expire_time:
-            print('wwwwwwwwww')
             user = UserProfile.objects.get(email=data['email'])
-            print(user)
             if user:
                 user.set_password(data['password'])
                 user.save()

@@ -192,6 +192,13 @@ class MaintenanceRecordsSerializer(serializers.ModelSerializer):
                     instance.save()
         except:
             pass
+        try:
+            print(validated_data)
+            instance.order_status = validated_data['order_status']
+            instance.need_summary = validated_data['need_summary']
+            instance.save()
+        except:
+            pass
         return instance
 
 

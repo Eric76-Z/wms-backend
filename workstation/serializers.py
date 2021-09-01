@@ -219,3 +219,9 @@ class PartsSerializer(serializers.ModelSerializer):
         except Exception as e:
             print(e)
         return instance
+
+
+class SortSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MySort
+        fields = '__all__'

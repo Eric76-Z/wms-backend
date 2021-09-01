@@ -13,9 +13,9 @@ from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
 
 from utils.filters import WeldinggunsFilter, MaintenanceRecordsFilter
-from workstation.models import MyLocation, BladeApply, Images, WeldingGun, Robot, MaintenanceRecords, Parts
+from workstation.models import MyLocation, BladeApply, Images, WeldingGun, Robot, MaintenanceRecords, Parts, MySort
 from workstation.serializers import LocationSerializer, BladeItemSerializer, ImageSerializer, WeldinggunSerializer, \
-    MaintenanceRecordsSerializer, PartsSerializer
+    MaintenanceRecordsSerializer, PartsSerializer, SortSerializer
 
 
 class MyPageNumberPagination(PageNumberPagination):
@@ -29,13 +29,13 @@ class PartsViewSet(ModelViewSet):
     serializer_class = PartsSerializer
     pagination_class = MyPageNumberPagination
     filter_backends = (OrderingFilter, DjangoFilterBackend, SearchFilter,)
-    filter_fields = ('sort', 'tag',)  # 逗号必加,缺点无法模糊查询
+    filter_fields = ('sort__type_layer', 'tag', 'users')  # 逗号必加,缺点无法模糊查询
     ordering_fields = ('hot',)
     ordering = ('-hot',)  # 默认排序
     search_fields = ('part_num', 'my_spec', 'order_num', 'brand__company_name', 'supplier__company_name')
 
 
-class LocationsViewset(ModelViewSet):
+class LocationsViewSet(ModelViewSet):
     queryset = MyLocation.objects.all()
     serializer_class = LocationSerializer
     filter_backends = (DjangoFilterBackend, SearchFilter,)
@@ -167,3 +167,10 @@ class MaintenanceRecordsViewSet(ModelViewSet):
     ordering_fields = ('create_time',)
     ordering = ('-create_time',)  # 默认排序
     # search_fields = ('',)
+
+
+class SortViewSet(ModelViewSet):
+    queryset = MySort.objects.all()
+    serializer_class = SortSerializer
+    filter_backends = (DjangoFilterBackend, SearchFilter,)
+    search_fields = ('type_name',)

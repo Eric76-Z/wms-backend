@@ -172,5 +172,7 @@ class MaintenanceRecordsViewSet(ModelViewSet):
 class SortViewSet(ModelViewSet):
     queryset = MySort.objects.all()
     serializer_class = SortSerializer
-    filter_backends = (DjangoFilterBackend, SearchFilter,)
+    filter_backends = (OrderingFilter,DjangoFilterBackend, SearchFilter,)
     search_fields = ('type_name',)
+    ordering_fields = ('type_layer',)
+    ordering = ('type_layer',)  # 默认排序

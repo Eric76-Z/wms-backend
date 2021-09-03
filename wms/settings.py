@@ -85,7 +85,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'wms.wsgi.application'
 
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
@@ -120,8 +119,9 @@ AUTH_PASSWORD_VALIDATORS = [
 EMAIL_HOST = 'smtp.163.com'
 EMAIL_HOST_USER = '17826859320@163.com'  # 改为你自己的邮箱名！
 EMAIL_HOST_PASSWORD = 'BGACRSEJZHMEBLBU'  # 你的邮箱密码
-EMAIL_PORT = 25  # 发送邮件的端口
-EMAIL_USE_TLS = True  # 是否使用 TLS
+EMAIL_PORT = 465  # 发送邮件的端口
+EMAIL_USE_TLS = False  # 是否使用 TLS
+EMAIL_USE_SSL = True
 # 收件人看到的发件人
 EMAIL_FROM = 'wms管理系统 <17826859320@163.com>'
 DEFAULT_FROM_EMAIL = 'wms管理系统 <17826859320@163.com>'  # 默认的发件人

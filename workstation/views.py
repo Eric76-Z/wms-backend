@@ -186,16 +186,10 @@ class SortViewSet(ModelViewSet):
                 if del_sort_layer[1] == '00':
                     MySort.objects.filter(type_layer__startswith=del_sort_layer[0]).delete()
                 else:
-                    print(del_sort_layer[0] + del_sort_layer[1])
+                    # print(del_sort_layer[0] + del_sort_layer[1])
                     MySort.objects.filter(type_layer__startswith=(del_sort_layer[0] + del_sort_layer[1])).delete()
             else:
                 del_sort.delete()
-            sort_all = MySort.objects.all()
-            for sort in sort_all:
-                print(re.findall(r'\w{2}', sort.type_layer))
-            sort_to_delete = MySort.objects.filter(f_type_id=kwargs['pk'])
-            for sort in sort_to_delete:
-                MySort.objects.filter(f_type_id=sort.id).delete()
             data = {
                 'code': 30,
                 'msg': '删除成功！'

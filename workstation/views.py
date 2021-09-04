@@ -1,4 +1,5 @@
 import base64
+import re
 
 from django.shortcuts import render
 
@@ -172,7 +173,36 @@ class MaintenanceRecordsViewSet(ModelViewSet):
 class SortViewSet(ModelViewSet):
     queryset = MySort.objects.all()
     serializer_class = SortSerializer
-    filter_backends = (OrderingFilter,DjangoFilterBackend, SearchFilter,)
+    filter_backends = (OrderingFilter, DjangoFilterBackend, SearchFilter,)
     search_fields = ('type_name',)
     ordering_fields = ('type_layer',)
     ordering = ('type_layer',)  # 默认排序
+
+    def destroy(self, request, *args, **kwargs):
+        try:
+            del_sort = MySort.objects.get(pk=kwargs['pk'])
+            del_sort_layer = re.findall(r'\w{2}', del_sort.type_layer)
+            if del_sort_layer[2] == '00':
+                if del_sort_layer[1] == '00':
+                    MySort.objects.filter(type_layer__startswith=del_sort_layer[0]).delete()
+                else:
+                    print(del_sort_layer[0] + del_sort_layer[1])
+                    MySort.objects.filter(type_layer__startswith=(del_sort_layer[0] + del_sort_layer[1])).delete()
+            else:
+                del_sort.delete()
+            sort_all = MySort.objects.all()
+            for sort in sort_all:
+                print(re.findall(r'\w{2}', sort.type_layer))
+            sort_to_delete = MySort.objects.filter(f_type_id=kwargs['pk'])
+            for sort in sort_to_delete:
+                MySort.objects.filter(f_type_id=sort.id).delete()
+            data = {
+                'code': 30,
+                'msg': '删除成功！'
+            }
+        except Exception as e:
+            data = {
+                'code': 31,
+                'msg': '无法删除，存在级联关系！'
+            }
+        return Response(data)

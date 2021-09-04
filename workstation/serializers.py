@@ -225,3 +225,6 @@ class SortSerializer(serializers.ModelSerializer):
     class Meta:
         model = MySort
         fields = '__all__'
+    def __delete__(self, instance):
+        print('wwwwww')
+

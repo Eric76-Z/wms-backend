@@ -200,3 +200,13 @@ class SortViewSet(ModelViewSet):
                 'msg': '无法删除，存在级联关系！'
             }
         return Response(data)
+
+    @action(methods=['get'], detail=False)
+    def listsort_device(self, request):
+        data = request.query_params
+        device_sort = MySort.objects.filter(type_layer__startswith='02')
+        device_sort_ser = self.get_serializer(device_sort, many=True)
+        return Response({
+            'results': device_sort_ser.data,
+            'code': 40
+        })

@@ -216,14 +216,18 @@ class PartsSerializer(serializers.ModelSerializer):
             for user in users:
                 part.users.add(user)
             part.save()
-        elif self.initial_data['action'] == 'sorts':
+        elif self.initial_data['action'] == 'sorts_device':
             part = Parts.objects.get(id=self.initial_data['id'])
-            sorts = MySort.objects.filter(id=self.initial_data['sort_id'])
-            # print(part.sort.all())
+            sorts = MySort.objects.get(id=self.initial_data['sort_id'])
+            print(part.sort.get_queryset())
             print(instance.sort.all())
-            for i in instance.sort:
-                print(i)
-            # instance.sort.add(sorts)
+            for i in instance.sort.all():
+                print(part.objects.filter(sort__type_layer))
+
+                if part.sort.filter(type_layer__startswith='02').exists():
+                    part.sort.filter(type_layer__startswith='02').delete()
+                    part.objects.filter(device_type__device_sort__type_layer__startswith='02')
+            # part.sort.add(sorts)
         return instance
 
 
@@ -231,6 +235,6 @@ class SortSerializer(serializers.ModelSerializer):
     class Meta:
         model = MySort
         fields = '__all__'
+
     def __delete__(self, instance):
         print('wwwwww')
-

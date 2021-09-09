@@ -218,16 +218,16 @@ class PartsSerializer(serializers.ModelSerializer):
             part.save()
         elif self.initial_data['action'] == 'sorts_device':
             part = Parts.objects.get(id=self.initial_data['id'])
-            sorts = MySort.objects.get(id=self.initial_data['sort_id'])
-            print(part.sort.get_queryset())
+            device_sort = MySort.objects.get(id=self.initial_data['sort_id'])
+            # print(part.sort.get_queryset())
             print(instance.sort.all())
-            for i in instance.sort.all():
-                print(part.objects.filter(sort__type_layer))
-
-                if part.sort.filter(type_layer__startswith='02').exists():
-                    part.sort.filter(type_layer__startswith='02').delete()
-                    part.objects.filter(device_type__device_sort__type_layer__startswith='02')
-            # part.sort.add(sorts)
+            sorts = instance.sort.all()
+            for sort in sorts:
+                print(type(sorts))
+                print(sort.type_layer.startswith('02'))
+                if sort.type_layer.startswith('02'):
+                    part.sort.remove(sort)
+            part.sort.add(device_sort)
         return instance
 
 

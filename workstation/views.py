@@ -13,7 +13,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
 
-from utils.filters import WeldinggunsFilter, MaintenanceRecordsFilter
+from utils.filters import WeldinggunsFilter, MaintenanceRecordsFilter, PartSearch
 from workstation.models import MyLocation, BladeApply, Images, WeldingGun, Robot, MaintenanceRecords, Parts, MySort
 from workstation.serializers import LocationSerializer, BladeItemSerializer, ImageSerializer, WeldinggunSerializer, \
     MaintenanceRecordsSerializer, PartsSerializer, SortSerializer
@@ -34,6 +34,7 @@ class PartsViewSet(ModelViewSet):
     ordering_fields = ('hot',)
     ordering = ('-hot',)  # 默认排序
     search_fields = ('part_num', 'my_spec', 'order_num', 'brand__company_name', 'supplier__company_name')
+
 
 
 class LocationsViewSet(ModelViewSet):

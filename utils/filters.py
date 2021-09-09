@@ -3,17 +3,17 @@ from itertools import chain
 import django_filters
 from django.db.models import Q
 
-from workstation.models import BladeApply, MaintenanceRecords
+from workstation.models import BladeApply, MaintenanceRecords, Parts
 
 
 class WeldinggunsFilter(django_filters.rest_framework.FilterSet):
     """用于焊枪工位查询的过滤器"""
     localLv1 = django_filters.CharFilter(field_name="weldinggun__location__location_level_1",
-                                    help_text='车间', method='location_filter')
+                                         help_text='车间', method='location_filter')
     localLv2 = django_filters.CharFilter(field_name="weldinggun__location__location_level_2", help_text='区域',
-                                    method='location_filter')
+                                         method='location_filter')
     localLv3 = django_filters.CharFilter(field_name="weldinggun__location__location_level_3", help_text='线体',
-                                    method='location_filter')
+                                         method='location_filter')
 
     def location_filter(self, queryset, name, value):
         datas = value.split(',')
@@ -31,6 +31,7 @@ class WeldinggunsFilter(django_filters.rest_framework.FilterSet):
         model = BladeApply
         # 用于查询的字段
         fields = ['localLv1', 'localLv2', 'localLv3']
+
 
 class MaintenanceRecordsFilter(django_filters.rest_framework.FilterSet):
     """用于工位查询的过滤器"""
@@ -53,3 +54,9 @@ class MaintenanceRecordsFilter(django_filters.rest_framework.FilterSet):
         model = MaintenanceRecords
         # 用于查询的字段
         fields = ['localLv1', 'localLv2', 'localLv3']
+
+
+def PartSearch(query):
+    query_set = Parts.objects.filter(Q(part_num__contains=query))
+    print(query_set)
+    return query_set

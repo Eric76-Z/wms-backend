@@ -5,6 +5,7 @@ from workstation.models import WeldingGun, MyLocation, Parts, MaintenanceRecords
 from xadmin import views
 from xadmin.filters import MultiSelectFieldListFilter
 
+
 class GlobalSiteSetting(object):
     # 设置后台顶部标题
     site_title = '修修'
@@ -61,7 +62,7 @@ class MyLocationAdmin(object):
 @xadmin.sites.register(models.Parts)
 class PartsAdmin(object):
     list_display = ['id', 'part_num', 'my_spec', 'order_num', 'price', 'brand', 'cordon', 'min_line', 'unit', 'mark',
-                    'sort']
+                    'desc', 'sort']
     list_filter = ['brand', 'sort']
     search_fields = ['id', 'part_num', 'my_spec', 'setech_spec', 'order_num', 'mark']
     ordering = ['id']
@@ -201,6 +202,7 @@ class BladeApplyAdmin(object):
     ordering = ['-id']
     list_per_page = 25
 
+
 @xadmin.sites.register(models.MaintenanceRecords)
 class MaintenanceRecordsAdmin(object):
 
@@ -237,7 +239,7 @@ class MaintenanceRecordsAdmin(object):
 
     list_display = ['id', 'maintenance_worker', 'rob', 'car_model', 'start_time', 'end_time', 'maintenance_record',
                     'experience_summary', 'order_comments']
-    list_filter = ['rob',]
+    list_filter = ['rob', ]
     search_fields = ['rob__rob_num']
     relfield_style = 'fk-ajax'
     ordering = ['-id']

@@ -209,15 +209,25 @@ class PartsSerializer(serializers.ModelSerializer):
         depth = 2  # 外键的序列化
 
     def update(self, instance, validated_data):
-        try:
+        if self.initial_data['action'] == 'users':
             part = Parts.objects.get(pk=self.initial_data['id'])
             users = UserProfile.objects.filter(id__in=self.initial_data['users'])
             part.users.clear()
             for user in users:
                 part.users.add(user)
             part.save()
-        except Exception as e:
-            print(e)
+        elif self.initial_data['action'] == 'sorts_device':
+            part = Parts.objects.get(id=self.initial_data['id'])
+            device_sort = MySort.objects.get(id=self.initial_data['sort_id'])
+            # print(part.sort.get_queryset())
+            print(instance.sort.all())
+            sorts = instance.sort.all()
+            for sort in sorts:
+                print(type(sorts))
+                print(sort.type_layer.startswith('02'))
+                if sort.type_layer.startswith('02'):
+                    part.sort.remove(sort)
+            part.sort.add(device_sort)
         return instance
 
 
@@ -225,3 +235,6 @@ class SortSerializer(serializers.ModelSerializer):
     class Meta:
         model = MySort
         fields = '__all__'
+
+    def __delete__(self, instance):
+        print('wwwwww')

@@ -55,6 +55,7 @@ class GetCode(APIView):
 
     def get(self, request):
         data = request.query_params
+        print(data)
         data = SendEmailCode(data['email'], 'reset')
         return Response(data)
 

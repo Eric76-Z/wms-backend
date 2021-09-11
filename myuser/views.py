@@ -1,6 +1,7 @@
 import datetime
 
-from django.core.mail import send_mail
+from django.contrib.auth.backends import ModelBackend
+from django.db.models import Q
 from rest_framework import generics
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -10,14 +11,26 @@ from myuser.models import UserProfile
 from myuser.serializers import UserRegSerializer, MyTokenObtainPairSerializer, UserProfileSerializer
 
 from rest_framework_simplejwt.views import TokenObtainPairView
-
 from utils.utils import CodeRandom, SendEmailCode
-from wms import settings
 from workstation.models.base_models import EmailVerifyRecord
 
 
 class MyTokenObtainPairView(TokenObtainPairView):
     serializer_class = MyTokenObtainPairSerializer
+
+
+# 用户名、手机、邮箱登陆
+class CustomBackend(ModelBackend):
+    def authenticate(self, request, username=None, password=None, **kwargs):
+        # noinspection PyBroadException
+        try:
+            user = UserProfile.objects.get(Q(username=username) | Q(phonenum=username) | Q(email=username))
+
+            if user.check_password(password):
+                return user
+        except Exception as e:
+            print(e)
+            return None
 
 
 class RegisterView(generics.CreateAPIView):
@@ -55,7 +68,6 @@ class GetCode(APIView):
 
     def get(self, request):
         data = request.query_params
-        print(data)
         data = SendEmailCode(data['email'], 'reset')
         return Response(data)
 
@@ -63,15 +75,12 @@ class GetCode(APIView):
 class ResetPwd(APIView):
     def post(self, request):
         data = request.data
-        print(data)
         # 删除超过30天的数据
         nowday = datetime.date.today()
         deltaday = datetime.timedelta(days=30)
         delete_day = nowday - deltaday
         EmailVerifyRecord.objects.filter(send_time__lte=delete_day).delete()
-
         email_record = EmailVerifyRecord.objects.get(code=data['code'])
-
         nowtime = datetime.datetime.now()
         expire_time = nowtime - datetime.timedelta(minutes=5)
         if email_record.send_time > expire_time:

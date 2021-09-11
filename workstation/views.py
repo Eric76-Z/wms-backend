@@ -12,6 +12,7 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
+from rest_framework_simplejwt import authentication
 
 from utils.filters import WeldinggunsFilter, MaintenanceRecordsFilter, PartSearch
 from workstation.models import MyLocation, BladeApply, Images, WeldingGun, Robot, MaintenanceRecords, Parts, MySort
@@ -35,6 +36,17 @@ class PartsViewSet(ModelViewSet):
     ordering = ('-hot',)  # 默认排序
     search_fields = ('part_num', 'my_spec', 'order_num', 'brand__company_name', 'supplier__company_name')
 
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+        serializer = self.get_serializer(queryset, many=True)
+        return Response({
+            'count': len(queryset),
+            'results': serializer.data
+        })
 
 
 class LocationsViewSet(ModelViewSet):
@@ -66,7 +78,7 @@ class LocationsViewSet(ModelViewSet):
     #  /workstation/location/back_by_target/?location=all&target=weldinggun
     @action(methods=['GET'], detail=False)  # 生成路由规则: 前缀/方法名/
     def back_by_target(self, request):
-        print(request.query_params)
+        # print(request.query_params)
         query = request.query_params
         data = []
         if query['target'] == 'local':
@@ -172,7 +184,8 @@ class MaintenanceRecordsViewSet(ModelViewSet):
 
 
 class SortViewSet(ModelViewSet):
-
+    permission_classes = [permissions.IsAuthenticated]
+    authentication_classes = (authentication.JWTAuthentication,)
     queryset = MySort.objects.all()
     serializer_class = SortSerializer
     filter_backends = (OrderingFilter, DjangoFilterBackend, SearchFilter,)
@@ -205,7 +218,7 @@ class SortViewSet(ModelViewSet):
 
     @action(methods=['get'], detail=False)
     def listsort_device(self, request):
-        data = request.query_params
+        # data = request.query_params
         device_sort = MySort.objects.filter(type_layer__startswith='02')
         device_sort_ser = self.get_serializer(device_sort, many=True)
         return Response({

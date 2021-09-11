@@ -193,7 +193,6 @@ class MaintenanceRecordsSerializer(serializers.ModelSerializer):
         except:
             pass
         try:
-            print(validated_data)
             instance.order_status = validated_data['order_status']
             instance.need_summary = validated_data['need_summary']
             instance.save()
@@ -220,21 +219,28 @@ class PartsSerializer(serializers.ModelSerializer):
             part = Parts.objects.get(id=self.initial_data['id'])
             device_sort = MySort.objects.get(id=self.initial_data['sort_id'])
             # print(part.sort.get_queryset())
-            print(instance.sort.all())
+            # print(instance.sort.all())
             sorts = instance.sort.all()
             for sort in sorts:
-                print(type(sorts))
-                print(sort.type_layer.startswith('02'))
+                # print(type(sorts))
+                # print(sort.type_layer.startswith('02'))
                 if sort.type_layer.startswith('02'):
                     part.sort.remove(sort)
             part.sort.add(device_sort)
         return instance
+    def to_representation(self, instance):
+        """重写返回的数据（添加额外字段）"""
+        data = super().to_representation(instance)
+        # if self.initial_data['search'] != None:
+        #     cur_part = Parts.objects.get(id=data.get('id'))
+        #     if cur_part.hot == None:
+        #         cur_part.hot = 0
+        #     cur_part.hot = cur_part.hot + 1
+        #     cur_part.save()
+        return data
 
 
 class SortSerializer(serializers.ModelSerializer):
     class Meta:
         model = MySort
         fields = '__all__'
-
-    def __delete__(self, instance):
-        print('wwwwww')

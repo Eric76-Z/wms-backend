@@ -10,14 +10,13 @@ from myuser.models import UserProfile
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     def validate(self, attrs):
         data = super().validate(attrs)
-        print(data)
+        # print(data)
         refresh = self.get_token(self.user)
         data['refresh'] = str(refresh)
         data['token'] = str(refresh.access_token)
         # Add extra responses here
         data['username'] = self.user.username
-        data['groups'] = self.user.groups.values_list('id', flat=True)
-        print(self.user.id)
+        data['groups'] = self.user.groups.values_list('name', flat=True)
         data['userId'] = self.user.id
         data['isSuper'] = self.user.is_superuser
         try:
@@ -32,7 +31,6 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
             data['realname'] = 'null'
             data['phonenum'] = 'null'
             data['email'] = 'null'
-        print(data)
         return data
 
 
@@ -52,6 +50,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
         # 返回处理之后的数据
         data['id'] = user.id
         data['isSuper'] = user.is_superuser
+        print(user.groups.values_list('name', flat=True))
         data['groups'] = user.groups.values_list('name', flat=True)
         data_back = {
             'email': data['email'],
@@ -64,7 +63,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
             'userId': data['id'],
             'username': data['username']
         }
-        print(data_back)
+        # print(data_back)
         return data_back
 
 
@@ -121,7 +120,7 @@ class UserRegSerializer(serializers.ModelSerializer):
         data['first_name'] = user.first_name
         data['last_name'] = user.last_name
         data['id'] = user.id
-        print(data)
+        # print(data)
         data_back = {
             'email': data['email'],
             'realname': data['realname'],
@@ -134,5 +133,3 @@ class UserRegSerializer(serializers.ModelSerializer):
             'username': data['username']
         }
         return data_back
-
-    # def perform_create(self):

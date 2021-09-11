@@ -33,7 +33,7 @@ class Parts(models.Model):
     update_time = models.DateTimeField(auto_now=True, blank=True, null=True, verbose_name="更新时间")
     log = models.ManyToManyField(MyLog, blank=True)
     tag = models.ManyToManyField(MyTag, blank=True)
-    hot = models.IntegerField(blank=True, null=True, verbose_name='热度')
+    hot = models.IntegerField(default=0, blank=True, null=True, verbose_name='热度')
     users = models.ManyToManyField(UserProfile, blank=True, verbose_name="收藏")
 
     class Meta:

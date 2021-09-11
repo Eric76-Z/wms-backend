@@ -37,8 +37,7 @@ class MaintenanceRecordsFilter(django_filters.rest_framework.FilterSet):
     """用于工位查询的过滤器"""
 
     def location_filter(self, queryset, name, value):
-        print(name)
-        print(name)
+        # print(name)
         datas = value.split(',')
         final_queryset = BladeApply.objects.none()
         for data in datas:
@@ -58,5 +57,5 @@ class MaintenanceRecordsFilter(django_filters.rest_framework.FilterSet):
 
 def PartSearch(query):
     query_set = Parts.objects.filter(Q(part_num__contains=query))
-    print(query_set)
+    # print(query_set)
     return query_set

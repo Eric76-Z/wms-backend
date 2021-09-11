@@ -19,6 +19,10 @@ REQUIRE_LOGIN = [
     '/mywork/maintenancerecord/'
 ]
 
+HOT_ADD = [
+    '/api/workstation/parts/'
+]
+
 class AuthMiddleware(MiddlewareMixin):
     def process_request(self, request):
         pass
@@ -55,5 +59,10 @@ class AuthMiddleware(MiddlewareMixin):
         #             return redirect(reverse('myuser:userlogin'))
         #     else:
         #         return redirect(reverse('myuser:userlogin'))
+
+
+# class HotSearchMiddleware(MiddlewareMixin):
+#     def process_request(self, request):
+#         if request.path in HOT_ADD:
 
 

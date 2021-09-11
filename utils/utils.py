@@ -74,7 +74,7 @@ def FilePath(instance, filename):  # 其中instance代表使用此函数类的�
 
 def SecondToLast(dict, dicts):
     for item in dicts:
-        print(item)
+        # print(item)
         if item['order_status'] == 4 and (item['weldinggun_num'] == dict['weldinggun_num']):
             # results中每个item按创建时间顺序从晚到早排序。目的是上次领用时间比目前item的时间晚，所以当遍历到早于当前item的领用时间，
             # 会由于已经被datetime格式化而无法再次被datetime格式化，报错后走except

@@ -60,6 +60,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'middleware.middleware.AuthMiddleware',
+    # 'middleware.middleware.HotSearchMiddleware',
 ]
 
 ROOT_URLCONF = 'wms.urls'
@@ -203,6 +204,10 @@ SIMPLE_JWT = {
     'ISSUER': None,
     'JWK_URL': None,
 }
+
+AUTHENTICATION_BACKENDS = (
+    'myuser.views.CustomBackend',
+)
 
 AUTH_USER_MODEL = 'myuser.UserProfile'
 

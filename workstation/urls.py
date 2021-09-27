@@ -18,6 +18,7 @@ router.register('images', views.ImagesViewSet, basename='images')
 router.register('weldinggun', views.WeldingGunViewSet, basename='weldinggun')
 router.register('maintenance', views.MaintenanceRecordsViewSet, basename='maintenance')
 router.register('sort', views.SortViewSet, basename='sort')
+router.register('devicestype', views.DevicesTypeViewSet, basename='devicestype')
 
 
 urlpatterns += router.urls

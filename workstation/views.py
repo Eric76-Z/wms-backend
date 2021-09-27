@@ -15,9 +15,10 @@ from rest_framework.viewsets import ModelViewSet
 from rest_framework_simplejwt import authentication
 
 from utils.filters import WeldinggunsFilter, MaintenanceRecordsFilter, PartSearch
-from workstation.models import MyLocation, BladeApply, Images, WeldingGun, Robot, MaintenanceRecords, Parts, MySort
+from workstation.models import MyLocation, BladeApply, Images, WeldingGun, Robot, MaintenanceRecords, Parts, MySort, \
+    DevicesType
 from workstation.serializers import LocationSerializer, BladeItemSerializer, ImageSerializer, WeldinggunSerializer, \
-    MaintenanceRecordsSerializer, PartsSerializer, SortSerializer
+    MaintenanceRecordsSerializer, PartsSerializer, SortSerializer, DevicesTypeSerializer
 
 
 class MyPageNumberPagination(PageNumberPagination):
@@ -225,3 +226,12 @@ class SortViewSet(ModelViewSet):
             'results': device_sort_ser.data,
             'code': 40
         })
+
+
+class DevicesTypeViewSet(ModelViewSet):
+    queryset = DevicesType.objects.all()
+    serializer_class = DevicesTypeSerializer
+    filter_backends = (OrderingFilter, DjangoFilterBackend, SearchFilter,)
+    filter_fields = ('device_sort__type_layer',)  # 逗号必加,缺点无法模糊查询
+    ordering_fields = ('create_time',)
+    ordering = ('-create_time',)  # 默认排序

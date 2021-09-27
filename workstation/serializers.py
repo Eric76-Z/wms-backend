@@ -10,7 +10,8 @@ from rest_framework import serializers
 from myuser.models import UserProfile
 from utils.utils import SecondToLast
 from wms import settings
-from workstation.models import MyLocation, BladeApply, Images, WeldingGun, MaintenanceRecords, Parts, Articles, MySort
+from workstation.models import MyLocation, BladeApply, Images, WeldingGun, MaintenanceRecords, Parts, Articles, MySort, \
+    DevicesType
 
 
 @receiver(pre_delete, sender=Images)  # sender=你要删除或修改文件字段所在的类**
@@ -209,12 +210,13 @@ class PartsSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         if self.initial_data['action'] == 'users':
-            part = Parts.objects.get(pk=self.initial_data['id'])
+            # part = Parts.objects.get(pk=self.initial_data['id'])
             users = UserProfile.objects.filter(id__in=self.initial_data['users'])
-            part.users.clear()
-            for user in users:
-                part.users.add(user)
-            part.save()
+            # part.users.clear()
+            # for user in users:
+            #     .users.add(user)
+            instance.users.set(users)
+            instance.save()
         elif self.initial_data['action'] == 'sorts_device':
             part = Parts.objects.get(id=self.initial_data['id'])
             device_sort = MySort.objects.get(id=self.initial_data['sort_id'])
@@ -227,7 +229,18 @@ class PartsSerializer(serializers.ModelSerializer):
                 if sort.type_layer.startswith('02'):
                     part.sort.remove(sort)
             part.sort.add(device_sort)
+        elif self.initial_data['action'] == 'device_type':
+            # print(self.initial_data)
+            # part = Parts.objects.get(id=self.initial_data['id'])
+            device_types = DevicesType.objects.filter(id__in=self.initial_data['device_types'])
+            # print(device_types)
+            instance.device_type.set(device_types)
+            #
+            # for device_type in device_types:
+            #     instance.device_type.add(device_type)
+            instance.save()
         return instance
+
     def to_representation(self, instance):
         """重写返回的数据（添加额外字段）"""
         data = super().to_representation(instance)
@@ -238,6 +251,13 @@ class PartsSerializer(serializers.ModelSerializer):
         #     cur_part.hot = cur_part.hot + 1
         #     cur_part.save()
         return data
+
+
+class DevicesTypeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = DevicesType
+        fields = '__all__'
+        depth = 1  # 外键的序列化
 
 
 class SortSerializer(serializers.ModelSerializer):

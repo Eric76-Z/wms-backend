@@ -10,7 +10,6 @@ from myuser.models import UserProfile
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     def validate(self, attrs):
         data = super().validate(attrs)
-        # print(data)
         refresh = self.get_token(self.user)
         data['refresh'] = str(refresh)
         data['token'] = str(refresh.access_token)

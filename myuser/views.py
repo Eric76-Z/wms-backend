@@ -6,6 +6,7 @@ from rest_framework import generics
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
+from rest_framework import serializers
 
 from myuser.models import UserProfile
 from myuser.serializers import UserRegSerializer, MyTokenObtainPairSerializer, UserProfileSerializer
@@ -24,13 +25,18 @@ class CustomBackend(ModelBackend):
     def authenticate(self, request, username=None, password=None, **kwargs):
         # noinspection PyBroadException
         try:
-            user = UserProfile.objects.get(Q(username=username) | Q(phonenum=username) | Q(email=username))
-
+            try:
+                user = UserProfile.objects.get(Q(username=username) | Q(phonenum=username) | Q(email=username))
+            except Exception:
+                raise serializers.ValidationError({'auth_err': '账号没有注册!'})
             if user.check_password(password):
                 return user
+            else:
+                # 如果不想密码登录也可以验证码在这里写
+                # 这里做验证码的操作
+                raise serializers.ValidationError({'auth_err': '密码错误!'})
         except Exception as e:
-            print(e)
-            return None
+            raise e
 
 
 class RegisterView(generics.CreateAPIView):

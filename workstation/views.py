@@ -19,7 +19,7 @@ from workstation.models import MyLocation, BladeApply, Images, WeldingGun, Robot
     DevicesType
 from workstation.serializers import LocationSerializer, BladeItemSerializer, ImageSerializer, WeldinggunSerializer, \
     MaintenanceRecordsSerializer, PartsSerializer, SortSerializer, DevicesTypeSerializer
-
+import numpy as np
 
 class MyPageNumberPagination(PageNumberPagination):
     page_size = 10  # default limit per age
@@ -118,27 +118,21 @@ class BladeItemViewSet(ModelViewSet):
     ordering = ('-create_time',)  # 默认排序
     search_fields = ('weldinggun__weldinggun_num',)
 
-    # @action(methods=['PATCH'], detail=True)
-    # def upload_img(self, request, *args, **kwargs):
-    #     data = request.data
-    #     print(data)
-    #     ser_data = data
-    #     if data['sort'] == 'repair_order_img':  # 维修单图片
-    #         bladeitem = BladeApply.objects.get(pk=data['itemid'])
-    #         ser_data = {
-    #             'img_name': 'roimg-' + str(bladeitem.repair_order_num),
-    #             'img': data['img'],
-    #         }
-    #         serializer = self.get_serializer(data=ser_data, partial=True)
-    #         if serializer.is_valid():
-    #             serializer.save()
-    #             bladeitem.repair_order_img.id = self.get_object()
-    #             return Response(serializer.data, status=status.HTTP_201_CREATED)
-    #     serializer = self.get_serializer(data=ser_data)
-    #     if serializer.is_valid():
-    #         serializer.save()
-    #         return Response(serializer.data, status=status.HTTP_201_CREATED)
-    #     return Response(serializer.error, status=status.HTTP_400_BAD_REQUEST)
+    @action(methods=['GET'], detail=False)
+    def analyse_data(self, request, *args, **kwargs):
+        top_ten_workstations = []
+        top_ten_workstations_num = []
+
+        bladeitems = BladeApply.objects.filter(order_status=4)
+        bladeitems = list(bladeitems)
+        unique_data = np.unique(bladeitems)
+        print(unique_data)
+        # for bladeitem in bladeitems:
+        #     print(bladeitem)
+            # print(list(bladeitem))
+        return Response({
+            'top_ten_workstations': '333'
+        })
 
 
 class ImagesViewSet(ModelViewSet):

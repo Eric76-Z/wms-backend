@@ -21,6 +21,7 @@ from workstation.serializers import LocationSerializer, BladeItemSerializer, Ima
     MaintenanceRecordsSerializer, PartsSerializer, SortSerializer, DevicesTypeSerializer
 import numpy as np
 
+
 class MyPageNumberPagination(PageNumberPagination):
     page_size = 10  # default limit per age
     page_size_query_param = 'pageSize'  # default param is offset
@@ -122,16 +123,25 @@ class BladeItemViewSet(ModelViewSet):
     def analyse_data(self, request, *args, **kwargs):
         top_ten_workstations = []
         top_ten_workstations_num = []
-
+        workstationsToNum = {}
         bladeitems = BladeApply.objects.filter(order_status=4)
         bladeitems = list(bladeitems)
-        unique_data = np.unique(bladeitems)
-        print(unique_data)
-        # for bladeitem in bladeitems:
-        #     print(bladeitem)
-            # print(list(bladeitem))
+        for bladeitem in bladeitems:
+            if bladeitem.weldinggun.weldinggun_num in workstationsToNum:
+                workstationsToNum[bladeitem.weldinggun.weldinggun_num] += 1
+            else:
+                workstationsToNum[bladeitem.weldinggun.weldinggun_num] = 1
+        workstationsToNum = sorted(workstationsToNum.items(), key=lambda kv:(kv[1], kv[0]), reverse=True)
+
+        for w in workstationsToNum:
+            top_ten_workstations.append(w[0])
+            top_ten_workstations_num.append(w[1])
+            if len(top_ten_workstations_num) >= 10:
+                break
+
         return Response({
-            'top_ten_workstations': '333'
+            'top_ten_workstations': top_ten_workstations,
+            'top_ten_workstations_num': top_ten_workstations_num,
         })
 
 

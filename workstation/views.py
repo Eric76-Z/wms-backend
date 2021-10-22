@@ -131,17 +131,20 @@ class BladeItemViewSet(ModelViewSet):
                 workstationsToNum[bladeitem.weldinggun.weldinggun_num] += 1
             else:
                 workstationsToNum[bladeitem.weldinggun.weldinggun_num] = 1
+
         workstationsToNum = sorted(workstationsToNum.items(), key=lambda kv:(kv[1], kv[0]), reverse=True)
 
         for w in workstationsToNum:
-            top_ten_workstations.append(w[0])
-            top_ten_workstations_num.append(w[1])
+            if len(top_ten_workstations_num) <= 10:
+                top_ten_workstations.append(w[0])
+                top_ten_workstations_num.append(w[1])
             if len(top_ten_workstations_num) >= 10:
                 break
 
         return Response({
-            'top_ten_workstations': top_ten_workstations,
-            'top_ten_workstations_num': top_ten_workstations_num,
+            'top_ten_workstations': top_ten_workstations[::-1],
+            'top_ten_workstations_num': top_ten_workstations_num[::-1],
+            # 'service_life_workstations':
         })
 
 

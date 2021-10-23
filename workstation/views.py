@@ -131,9 +131,9 @@ class BladeItemViewSet(ModelViewSet):
                 workstationsToNum[bladeitem.weldinggun.weldinggun_num] += 1
             else:
                 workstationsToNum[bladeitem.weldinggun.weldinggun_num] = 1
-
         workstationsToNum = sorted(workstationsToNum.items(), key=lambda kv:(kv[1], kv[0]), reverse=True)
 
+        print(workstationsToNum)
         for w in workstationsToNum:
             if len(top_ten_workstations_num) <= 10:
                 top_ten_workstations.append(w[0])

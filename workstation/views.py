@@ -121,26 +121,38 @@ class BladeItemViewSet(ModelViewSet):
 
     @action(methods=['GET'], detail=False)
     def analyse_data(self, request, *args, **kwargs):
+
         top_ten_workstations = []
         top_ten_workstations_num = []
-        workstationsToNum = {}
+        workstationsData = {}
+
+        workstationsToNum = {}  # [('J435R01SK1', 4), ('J060R01SK1', 4), ('J020R04SK1', 4), ('F2-B1', 4), ('S520R05SK1', 3), ...]
         bladeitems = BladeApply.objects.filter(order_status=4)
         bladeitems = list(bladeitems)
         for bladeitem in bladeitems:
-            if bladeitem.weldinggun.weldinggun_num in workstationsToNum:
-                workstationsToNum[bladeitem.weldinggun.weldinggun_num] += 1
+            if bladeitem.weldinggun.weldinggun_num in workstationsData:
+                workstationsData[bladeitem.weldinggun.weldinggun_num]['frequency'] += 1
+                workstationsData[bladeitem.weldinggun.weldinggun_num]['timeset'].append(bladeitem.create_time)
             else:
-                workstationsToNum[bladeitem.weldinggun.weldinggun_num] = 1
-        workstationsToNum = sorted(workstationsToNum.items(), key=lambda kv:(kv[1], kv[0]), reverse=True)
+                workstationsData[bladeitem.weldinggun.weldinggun_num] = {'frequency': 1}
+                workstationsData[bladeitem.weldinggun.weldinggun_num]['timeset'] = []
+                workstationsData[bladeitem.weldinggun.weldinggun_num]['timeset'].append(bladeitem.create_time)
+        #
+        service_life = {
+            'workstations': [],
+            'workstations_freq': [],
+            'top_ten_workstations': [],
+            'top_ten_workstations_freq': []
+        }
+        for w in workstationsData:
+            service_life[workstations]
 
-        print(workstationsToNum)
-        for w in workstationsToNum:
+        for w in workstationsData:
             if len(top_ten_workstations_num) <= 10:
                 top_ten_workstations.append(w[0])
                 top_ten_workstations_num.append(w[1])
             if len(top_ten_workstations_num) >= 10:
                 break
-
         return Response({
             'top_ten_workstations': top_ten_workstations[::-1],
             'top_ten_workstations_num': top_ten_workstations_num[::-1],

@@ -15,6 +15,7 @@ from rest_framework.viewsets import ModelViewSet
 from rest_framework_simplejwt import authentication
 
 from utils.filters import WeldinggunsFilter, MaintenanceRecordsFilter, PartSearch
+from utils.utils import SortListAndList
 from workstation.models import MyLocation, BladeApply, Images, WeldingGun, Robot, MaintenanceRecords, Parts, MySort, \
     DevicesType
 from workstation.serializers import LocationSerializer, BladeItemSerializer, ImageSerializer, WeldinggunSerializer, \
@@ -122,41 +123,55 @@ class BladeItemViewSet(ModelViewSet):
     @action(methods=['GET'], detail=False)
     def analyse_data(self, request, *args, **kwargs):
 
-        top_ten_workstations = []
-        top_ten_workstations_num = []
         workstationsData = {}
-
-        workstationsToNum = {}  # [('J435R01SK1', 4), ('J060R01SK1', 4), ('J020R04SK1', 4), ('F2-B1', 4), ('S520R05SK1', 3), ...]
+        # --------------------------数据收集--------------------------#
         bladeitems = BladeApply.objects.filter(order_status=4)
         bladeitems = list(bladeitems)
         for bladeitem in bladeitems:
             if bladeitem.weldinggun.weldinggun_num in workstationsData:
                 workstationsData[bladeitem.weldinggun.weldinggun_num]['frequency'] += 1
-                workstationsData[bladeitem.weldinggun.weldinggun_num]['timeset'].append(bladeitem.create_time)
             else:
                 workstationsData[bladeitem.weldinggun.weldinggun_num] = {'frequency': 1}
+                workstationsData[bladeitem.weldinggun.weldinggun_num]['bladetypeset'] = []
                 workstationsData[bladeitem.weldinggun.weldinggun_num]['timeset'] = []
-                workstationsData[bladeitem.weldinggun.weldinggun_num]['timeset'].append(bladeitem.create_time)
-        #
-        service_life = {
+            workstationsData[bladeitem.weldinggun.weldinggun_num]['bladetypeset'].append(
+                bladeitem.bladetype_received.my_spec)
+            workstationsData[bladeitem.weldinggun.weldinggun_num]['timeset'].append(bladeitem.create_time)
+        print(workstationsData)
+        # --------------------------数据解析--------------------------#
+        top_receive = {
             'workstations': [],
             'workstations_freq': [],
             'top_ten_workstations': [],
             'top_ten_workstations_freq': []
         }
+        service_life = {
+            'blade_type': [],
+            'average_life': [],
+            'temple_num': [],
+        }
         for w in workstationsData:
-            service_life[workstations]
+            top_receive['workstations'].append(w)
+            top_receive['workstations_freq'].append(len(workstationsData[w]['timeset']))
+            for i in range(0, len(workstationsData[w]['bladetypeset'])):
+                if len(workstationsData[w]['bladetypeset']) is not 1:
+                    if workstationsData[w]['bladetypeset'][i] in service_life['blade_type']:
+                        service_life['average_life'].append(workstationsData[w]['bladetypeset'][i])
+                    else:
+                        service_life['blade_type'].append(workstationsData[w]['bladetypeset'][i])
+                    print(workstationsData[w]['bladetypeset'])
+        # --------------------------top10--------------------------#
+        top_receive['workstations'], top_receive['workstations_freq'] = SortListAndList(top_receive['workstations'],
+                                                                                        top_receive[
+                                                                                            'workstations_freq'],
+                                                                                        reverse=True)
+        # --------------------------寿命分析--------------------------#
+        blade_type = Parts.objects.filter(tag=1)
+        for blade in blade_type:
+            service_life['blade_type'].append(blade.my_spec)
 
-        for w in workstationsData:
-            if len(top_ten_workstations_num) <= 10:
-                top_ten_workstations.append(w[0])
-                top_ten_workstations_num.append(w[1])
-            if len(top_ten_workstations_num) >= 10:
-                break
         return Response({
-            'top_ten_workstations': top_ten_workstations[::-1],
-            'top_ten_workstations_num': top_ten_workstations_num[::-1],
-            # 'service_life_workstations':
+            'top_receive': top_receive
         })
 
 

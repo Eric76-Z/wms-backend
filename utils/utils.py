@@ -132,3 +132,28 @@ def SendEmailCode(email, send_type):
         send_title = '更换邮箱：'
         send_body = '请点击一下链接进行重置您的邮箱：\n http://127.0.0.1:8000/users/user_mail_reset/' + code
         send_mail(send_title, send_body, EMAIL_FROM, [email])
+
+
+# 涉及两个列表的排序，list1根据list2的排序顺序排序
+def SortListAndList(list1, list2, reverse):
+    # 升序
+    if reverse == False:
+        for i in range(0, len(list2)):
+            min = i
+            for j in range(i + 1, len(list2)):
+                if list2[j] < list2[min]:
+                    min = j
+            list2[min], list2[i] = list2[i], list2[min]
+            list1[min], list1[i] = list1[i], list1[min]
+    # 降序
+    else:
+        for i in range(0, len(list2)):
+            max = i
+            for j in range(i + 1, len(list2)):
+                if list2[j] > list2[max]:
+                    max = j
+            list2[max], list2[i] = list2[i], list2[max]
+            list1[max], list1[i] = list1[i], list1[max]
+    # print(list1)
+    # print(list2)
+    return [list1, list2]

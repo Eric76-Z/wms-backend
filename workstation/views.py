@@ -137,7 +137,7 @@ class BladeItemViewSet(ModelViewSet):
             workstationsData[bladeitem.weldinggun.weldinggun_num]['bladetypeset'].append(
                 bladeitem.bladetype_received.my_spec)
             workstationsData[bladeitem.weldinggun.weldinggun_num]['timeset'].append(bladeitem.create_time)
-        print(workstationsData)
+        # print(workstationsData)
         # --------------------------数据解析--------------------------#
         top_receive = {
             'workstations': [],
@@ -154,13 +154,13 @@ class BladeItemViewSet(ModelViewSet):
             for i in range(0, len(workstationsData[w]['bladetypeset'])):
                 if i < len(workstationsData[w]['bladetypeset']) - 1:
                     delta = workstationsData[w]['timeset'][i + 1] - workstationsData[w]['timeset'][i]
-                    print(delta.days)
                     delta_day = delta.days
                     if len(workstationsData[w]['bladetypeset']) is not 1:
                         if workstationsData[w]['bladetypeset'][i] in service_life['blade_type']:
                             index = service_life['blade_type'].index(workstationsData[w]['bladetypeset'][i])
-                            service_life['average_life'][index] = round(((service_life['average_life'][index] * service_life[
-                                'temple_num'][index] + delta_day) / (service_life['temple_num'][index] + 1)), 2)
+                            service_life['average_life'][index] = round(
+                                ((service_life['average_life'][index] * service_life[
+                                    'temple_num'][index] + delta_day) / (service_life['temple_num'][index] + 1)), 2)
 
                             service_life['temple_num'][index] += 1
                         else:
@@ -172,10 +172,6 @@ class BladeItemViewSet(ModelViewSet):
                                                                                         top_receive[
                                                                                             'workstations_freq'],
                                                                                         reverse=True)
-        # # --------------------------寿命分析--------------------------#
-        # blade_type = Parts.objects.filter(tag=1)
-        # for blade in blade_type:
-        #     service_life['blade_type'].append(blade.my_spec)
         return Response({
             'top_receive': top_receive,
             'service_life': service_life,

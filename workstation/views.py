@@ -142,8 +142,6 @@ class BladeItemViewSet(ModelViewSet):
         top_receive = {
             'workstations': [],
             'workstations_freq': [],
-            'top_ten_workstations': [],
-            'top_ten_workstations_freq': []
         }
         service_life = {
             'blade_type': [],
@@ -154,24 +152,33 @@ class BladeItemViewSet(ModelViewSet):
             top_receive['workstations'].append(w)
             top_receive['workstations_freq'].append(len(workstationsData[w]['timeset']))
             for i in range(0, len(workstationsData[w]['bladetypeset'])):
-                if len(workstationsData[w]['bladetypeset']) is not 1:
-                    if workstationsData[w]['bladetypeset'][i] in service_life['blade_type']:
-                        service_life['average_life'].append(workstationsData[w]['bladetypeset'][i])
-                    else:
-                        service_life['blade_type'].append(workstationsData[w]['bladetypeset'][i])
-                    print(workstationsData[w]['bladetypeset'])
+                if i < len(workstationsData[w]['bladetypeset']) - 1:
+                    delta = workstationsData[w]['timeset'][i + 1] - workstationsData[w]['timeset'][i]
+                    print(delta.days)
+                    delta_day = delta.days
+                    if len(workstationsData[w]['bladetypeset']) is not 1:
+                        if workstationsData[w]['bladetypeset'][i] in service_life['blade_type']:
+                            index = service_life['blade_type'].index(workstationsData[w]['bladetypeset'][i])
+                            service_life['average_life'][index] = round(((service_life['average_life'][index] * service_life[
+                                'temple_num'][index] + delta_day) / (service_life['temple_num'][index] + 1)), 2)
+
+                            service_life['temple_num'][index] += 1
+                        else:
+                            service_life['blade_type'].append(workstationsData[w]['bladetypeset'][i])
+                            service_life['average_life'].append(delta_day)
+                            service_life['temple_num'].append(1)
         # --------------------------top10--------------------------#
         top_receive['workstations'], top_receive['workstations_freq'] = SortListAndList(top_receive['workstations'],
                                                                                         top_receive[
                                                                                             'workstations_freq'],
                                                                                         reverse=True)
-        # --------------------------寿命分析--------------------------#
-        blade_type = Parts.objects.filter(tag=1)
-        for blade in blade_type:
-            service_life['blade_type'].append(blade.my_spec)
-
+        # # --------------------------寿命分析--------------------------#
+        # blade_type = Parts.objects.filter(tag=1)
+        # for blade in blade_type:
+        #     service_life['blade_type'].append(blade.my_spec)
         return Response({
-            'top_receive': top_receive
+            'top_receive': top_receive,
+            'service_life': service_life,
         })
 
 

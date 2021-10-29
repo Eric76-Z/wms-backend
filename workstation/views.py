@@ -161,7 +161,6 @@ class BladeItemViewSet(ModelViewSet):
                             service_life['average_life'][index] = round(
                                 ((service_life['average_life'][index] * service_life[
                                     'temple_num'][index] + delta_day) / (service_life['temple_num'][index] + 1)), 2)
-
                             service_life['temple_num'][index] += 1
                         else:
                             service_life['blade_type'].append(workstationsData[w]['bladetypeset'][i])

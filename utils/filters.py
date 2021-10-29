@@ -30,7 +30,7 @@ class WeldinggunsFilter(django_filters.rest_framework.FilterSet):
     class Meta:
         model = BladeApply
         # 用于查询的字段
-        fields = ['localLv1', 'localLv2', 'localLv3']
+        fields = ['localLv1', 'localLv2', 'localLv3', 'order_status']
 
 
 class MaintenanceRecordsFilter(django_filters.rest_framework.FilterSet):

@@ -1,6 +1,7 @@
 import base64
 import re
 
+from django.db.models import Q
 from django.shortcuts import render
 
 # Create your views here.
@@ -17,7 +18,7 @@ from rest_framework_simplejwt import authentication
 from utils.filters import WeldinggunsFilter, MaintenanceRecordsFilter, PartSearch
 from utils.utils import SortListAndList
 from workstation.models import MyLocation, BladeApply, Images, WeldingGun, Robot, MaintenanceRecords, Parts, MySort, \
-    DevicesType
+    DevicesType, Stock
 from workstation.serializers import LocationSerializer, BladeItemSerializer, ImageSerializer, WeldinggunSerializer, \
     MaintenanceRecordsSerializer, PartsSerializer, SortSerializer, DevicesTypeSerializer
 import numpy as np
@@ -125,29 +126,36 @@ class BladeItemViewSet(ModelViewSet):
 
         workstationsData = {}
         # --------------------------数据收集--------------------------#
-        bladeitems = BladeApply.objects.filter(order_status=4)
-        bladeitems = list(bladeitems)
+        bladeitems_querysets = BladeApply.objects.filter(order_status=4)
+        bladeitems = list(bladeitems_querysets)
         for bladeitem in bladeitems:
             if bladeitem.weldinggun.weldinggun_num in workstationsData:
                 workstationsData[bladeitem.weldinggun.weldinggun_num]['frequency'] += 1
             else:
                 workstationsData[bladeitem.weldinggun.weldinggun_num] = {'frequency': 1}
                 workstationsData[bladeitem.weldinggun.weldinggun_num]['bladetypeset'] = []
+                workstationsData[bladeitem.weldinggun.weldinggun_num]['price'] = []
                 workstationsData[bladeitem.weldinggun.weldinggun_num]['timeset'] = []
             workstationsData[bladeitem.weldinggun.weldinggun_num]['bladetypeset'].append(
                 bladeitem.bladetype_received.my_spec)
+            workstationsData[bladeitem.weldinggun.weldinggun_num]['price'].append(
+                bladeitem.bladetype_received.price)
             workstationsData[bladeitem.weldinggun.weldinggun_num]['timeset'].append(bladeitem.create_time)
+
         # print(workstationsData)
         # --------------------------数据解析--------------------------#
         top_receive = {
             'workstations': [],
             'workstations_freq': [],
         }
-        service_life = {
+        service_data = {
             'blade_type': [],
+            'blade_price': [],
             'average_life': [],
+            'cost_effective': [],
             'temple_num': [],
         }
+        blade_service_status = []
         for w in workstationsData:
             top_receive['workstations'].append(w)
             top_receive['workstations_freq'].append(len(workstationsData[w]['timeset']))
@@ -156,24 +164,49 @@ class BladeItemViewSet(ModelViewSet):
                     delta = workstationsData[w]['timeset'][i + 1] - workstationsData[w]['timeset'][i]
                     delta_day = delta.days
                     if len(workstationsData[w]['bladetypeset']) is not 1:
-                        if workstationsData[w]['bladetypeset'][i] in service_life['blade_type']:
-                            index = service_life['blade_type'].index(workstationsData[w]['bladetypeset'][i])
-                            service_life['average_life'][index] = round(
-                                ((service_life['average_life'][index] * service_life[
-                                    'temple_num'][index] + delta_day) / (service_life['temple_num'][index] + 1)), 2)
-                            service_life['temple_num'][index] += 1
+                        if workstationsData[w]['bladetypeset'][i] in service_data['blade_type']:
+                            index = service_data['blade_type'].index(workstationsData[w]['bladetypeset'][i])
+                            service_data['average_life'][index] = round(
+                                ((service_data['average_life'][index] * service_data[
+                                    'temple_num'][index] + delta_day) / (service_data['temple_num'][index] + 1)), 2)
+                            service_data['temple_num'][index] += 1
                         else:
-                            service_life['blade_type'].append(workstationsData[w]['bladetypeset'][i])
-                            service_life['average_life'].append(delta_day)
-                            service_life['temple_num'].append(1)
+                            service_data['blade_type'].append(workstationsData[w]['bladetypeset'][i])
+                            service_data['blade_price'].append(workstationsData[w]['price'][i])
+                            service_data['average_life'].append(delta_day)
+                            service_data['cost_effective'].append(0)
+                            service_data['temple_num'].append(1)
+        for i in range(len(service_data['blade_type'])):
+            service_data['cost_effective'][i] = round(
+                service_data['average_life'][i] * 10 / service_data['blade_price'][i],
+                2)
+            # service_data['total_receive'].append(len(bladeitems_querysets.filter(
+            #     bladetype_received__my_spec=service_data['blade_type'][i])))
+
         # --------------------------top10--------------------------#
         top_receive['workstations'], top_receive['workstations_freq'] = SortListAndList(top_receive['workstations'],
                                                                                         top_receive[
                                                                                             'workstations_freq'],
                                                                                         reverse=True)
+        # --------------------------库存与总领用量--------------------------#
+        blades = Parts.objects.filter(tag=1)
+        for blade in blades:
+            blade_stock = Stock.objects.filter(part__part_num=blade.part_num)
+            blade_stock_nb = 0
+            for b in blade_stock:
+                if b.location.location_level_1 == '宁波':
+                    blade_stock_nb += b.part_stock
+            blade_service_status.append({
+                'blade_spec': blade.my_spec.split('|', 1)[0],
+                'total_receive': len(bladeitems_querysets.filter(
+                    bladetype_received__my_spec=blade.my_spec)),
+                'blade_stock_nb': blade_stock_nb
+            })
+
         return Response({
             'top_receive': top_receive,
-            'service_life': service_life,
+            'service_data': service_data,
+            'blade_service_status': blade_service_status
         })
 
 

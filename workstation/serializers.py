@@ -12,6 +12,7 @@ from utils.utils import SecondToLast
 from wms import settings
 from workstation.models import MyLocation, BladeApply, Images, WeldingGun, MaintenanceRecords, Parts, Articles, MySort, \
     DevicesType
+from workstation.models.fc_models import EmsMaintenanceRecords
 
 
 @receiver(pre_delete, sender=Images)  # sender=你要删除或修改文件字段所在的类**
@@ -200,6 +201,24 @@ class MaintenanceRecordsSerializer(serializers.ModelSerializer):
         except:
             pass
         return instance
+
+
+class EmsMaintenanceRecordsSerializer(serializers.ModelSerializer):
+    # token = serializers.CharField(label='生成token', read_only=True)
+
+    class Meta:
+        model = EmsMaintenanceRecords
+        fields = '__all__'
+        depth = 1  # 外键的序列化
+
+    def is_valid(self, raise_exception=False):
+        try:
+            super(EmsMaintenanceRecordsSerializer, self).is_valid(raise_exception)
+            self.validated_data['applicant_id'] = self.initial_data['applicant_id']
+        except:
+            pass
+        # print(self.validated_data)
+        return super(EmsMaintenanceRecordsSerializer, self).is_valid(raise_exception)
 
 
 class PartsSerializer(serializers.ModelSerializer):

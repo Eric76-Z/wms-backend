@@ -20,7 +20,8 @@ from utils.utils import SortListAndList
 from workstation.models import MyLocation, BladeApply, Images, WeldingGun, Robot, MaintenanceRecords, Parts, MySort, \
     DevicesType, Stock
 from workstation.serializers import LocationSerializer, BladeItemSerializer, ImageSerializer, WeldinggunSerializer, \
-    MaintenanceRecordsSerializer, PartsSerializer, SortSerializer, DevicesTypeSerializer
+    MaintenanceRecordsSerializer, PartsSerializer, SortSerializer, DevicesTypeSerializer, \
+    EmsMaintenanceRecordsSerializer
 import numpy as np
 
 
@@ -245,6 +246,19 @@ class MaintenanceRecordsViewSet(ModelViewSet):
     # authentication_classes = (authentication.JWTAuthentication,)
     queryset = MaintenanceRecords.objects.all()
     serializer_class = MaintenanceRecordsSerializer
+    pagination_class = MyPageNumberPagination
+    filter_backends = (OrderingFilter, DjangoFilterBackend, SearchFilter,)
+    filterset_class = MaintenanceRecordsFilter
+    ordering_fields = ('create_time',)
+    ordering = ('-create_time',)  # 默认排序
+    # search_fields = ('',)
+
+
+class EmsMaintenanceRecordsViewSet(ModelViewSet):
+    # permission_classes = [permissions.IsAuthenticated]
+    # authentication_classes = (authentication.JWTAuthentication,)
+    queryset = MaintenanceRecords.objects.all()
+    serializer_class = EmsMaintenanceRecordsSerializer
     pagination_class = MyPageNumberPagination
     filter_backends = (OrderingFilter, DjangoFilterBackend, SearchFilter,)
     filterset_class = MaintenanceRecordsFilter

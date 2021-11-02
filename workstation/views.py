@@ -178,9 +178,12 @@ class BladeItemViewSet(ModelViewSet):
                             service_data['cost_effective'].append(0)
                             service_data['temple_num'].append(1)
         for i in range(len(service_data['blade_type'])):
-            service_data['cost_effective'][i] = round(
-                service_data['average_life'][i] * 10 / service_data['blade_price'][i],
-                2)
+            if service_data['blade_price'][i] == None:
+                service_data['cost_effective'][i] = 0
+            else:
+                service_data['cost_effective'][i] = round(
+                    service_data['average_life'][i] * 10 / service_data['blade_price'][i],
+                    2)
             # service_data['total_receive'].append(len(bladeitems_querysets.filter(
             #     bladetype_received__my_spec=service_data['blade_type'][i])))
 
@@ -209,7 +212,6 @@ class BladeItemViewSet(ModelViewSet):
             'service_data': service_data,
             'blade_service_status': blade_service_status
         })
-
 
 
 class ImagesViewSet(ModelViewSet):
@@ -303,7 +305,6 @@ class SortViewSet(ModelViewSet):
 
     @action(methods=['get'], detail=False)
     def listsort_device(self, request):
-        # data = request.query_params
         device_sort = MySort.objects.filter(type_layer__startswith='02')
         device_sort_ser = self.get_serializer(device_sort, many=True)
         return Response({

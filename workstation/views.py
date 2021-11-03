@@ -264,7 +264,7 @@ class EmsMaintenanceRecordsViewSet(ModelViewSet):
     queryset = EmsMaintenanceRecords.objects.all()
     serializer_class = EmsMaintenanceRecordsSerializer
     pagination_class = MyPageNumberPagination
-    # filter_backends = (OrderingFilter, DjangoFilterBackend, SearchFilter,)
+    filter_backends = (OrderingFilter, DjangoFilterBackend, SearchFilter,)
     # filterset_class = MaintenanceRecordsFilter
     ordering_fields = ('create_time',)
     ordering = ('-create_time',)  # 默认排序

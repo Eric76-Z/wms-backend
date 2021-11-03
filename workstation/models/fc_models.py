@@ -146,7 +146,7 @@ class EmsMaintenanceRecords(models.Model):
     ng_car = models.IntegerField(blank=True, null=True, verbose_name="NG小车")
     maintenance_record = models.TextField(blank=True, null=True, verbose_name="维修记录")
     order_comments = models.CharField(max_length=255, blank=True, null=True, verbose_name="备注")
-    closing_date = models.DateTimeField(auto_now=True, blank=True, null=True, verbose_name="节点")
+    closing_date = models.DateField( blank=True, null=True, verbose_name="节点")
     create_time = models.DateTimeField(auto_now_add=True, blank=True, null=True, verbose_name="创建时间")
     update_time = models.DateTimeField(auto_now=True, blank=True, null=True, verbose_name="更新时间")
     order_status = models.IntegerField(blank=True, null=True, verbose_name="订单状态")

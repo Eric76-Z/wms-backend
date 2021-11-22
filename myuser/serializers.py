@@ -15,7 +15,10 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
         data['token'] = str(refresh.access_token)
         # Add extra responses here
         data['username'] = self.user.username
-        data['groups'] = self.user.groups.values_list('name', flat=True)
+        # data['groups'] = self.user.groups.values_list('name', flat=True)
+        print()
+        data['groups'] = self.user.groups.values_list('id', flat=True)
+
         data['userId'] = self.user.id
         data['isSuper'] = self.user.is_superuser
         try:
@@ -50,7 +53,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
         data['id'] = user.id
         data['isSuper'] = user.is_superuser
         print(user.groups.values_list('name', flat=True))
-        data['groups'] = user.groups.values_list('name', flat=True)
+        data['groups'] = user.groups.values_list('id', flat=True)
         data_back = {
             'email': data['email'],
             'realname': data['realname'],
@@ -115,7 +118,7 @@ class UserRegSerializer(serializers.ModelSerializer):
         data.pop('password')
         data['userId'] = user.id
         data['isSuper'] = user.is_superuser
-        data['groups'] = user.groups.values_list('name', flat=True)
+        data['groups'] = user.groups.values_list('id', flat=True)
         data['first_name'] = user.first_name
         data['last_name'] = user.last_name
         data['id'] = user.id
